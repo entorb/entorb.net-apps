@@ -1,0 +1,24 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "oware"
+version = "0.1.0"
+requires-python = ">=3.14"
+dependencies = []
+
+[project.scripts]
+oware = "oware.__main__:main"
+
+[tool.pyright]
+include = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+
+[tool.vulture]
+# ignore_decorators = ["@app.get", "@router.get", "@router.post"]
+paths = ["src"]
+# exclude = ["fastapi_app/gunicorn_conf.py", "fastapi_app/schemas.py"]

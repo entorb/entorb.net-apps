@@ -1,0 +1,8 @@
+.venv/
+/python/.pytest_cache
+/python/.ruff_cache
+/web/.vite/
+dist/
+node_modules/
+tmp/
+uv.lock
