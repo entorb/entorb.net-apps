@@ -1,0 +1,1 @@
+# Idle Gaming Investment Planner

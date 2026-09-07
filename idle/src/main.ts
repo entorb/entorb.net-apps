@@ -1,0 +1,278 @@
+import "./style.css";
+import {
+  type Evaluation,
+  evaluate,
+  formatDeltaPlain,
+  formatMinutes,
+  formatMinutesOnly,
+  formatNumber,
+  paybackSeconds,
+} from "./calc";
+import { options, state } from "./const";
+
+function mustFind<T extends HTMLElement>(
+  sel: string,
+  root: ParentNode = document,
+): T {
+  const el = root.querySelector<T>(sel);
+  if (!el) throw new Error(`Missing element: ${sel}`);
+  return el;
+}
+
+const app = mustFind<HTMLDivElement>("#app");
+
+app.innerHTML = `
+  <main class="ledger">
+    <header class="ledger__head">
+      <h1>Idle Time-to-target</h1>
+    </header>
+
+    <section class="rowbox">
+      <section class="corebox" aria-label="Current standing">
+        <label class="field">
+          <span>Target amount</span>
+          <input type="text" id="in-target" inputmode="decimal" autocomplete="off" spellcheck="false" tabindex="1" />
+        </label>
+        <label class="field">
+          <span>Current amount</span>
+          <input type="text" id="in-amount" inputmode="decimal" autocomplete="off" spellcheck="false" tabindex="2" />
+        </label>
+        <label class="field">
+          <span>Current gain / s</span>
+          <input type="text" id="in-gain" inputmode="decimal" autocomplete="off" spellcheck="false" tabindex="3" />
+        </label>
+      </section>
+      <section class="baseline" id="baseline" aria-live="polite"></section>
+    </section>
+
+    <section class="options" aria-label="Investment options">
+      <div class="options__head">
+        <h2>Investment options</h2>
+        <button type="button" id="add-option">+ add option</button>
+      </div>
+      <div class="table" role="table">
+        <div class="row row--head" role="row">
+<span role="columnheader">Option</span>
+          <span role="columnheader">Gain / s</span>
+          <span role="columnheader">Cost</span>
+          <span role="columnheader">Payback</span>
+          <span role="columnheader">Wait to afford</span>
+          <span role="columnheader" class="head-ttt">
+            <span>Time to target</span>
+          </span>
+        </div>
+        <div id="rows"></div>
+      </div>
+    </section>
+
+<section class="verdict" id="verdict" aria-live="polite"></section>
+  </main>
+`;
+
+const inTarget = mustFind<HTMLInputElement>("#in-target");
+const inAmount = mustFind<HTMLInputElement>("#in-amount");
+const inGain = mustFind<HTMLInputElement>("#in-gain");
+const rowsEl = mustFind<HTMLDivElement>("#rows");
+const baselineEl = mustFind<HTMLDivElement>("#baseline");
+const verdictEl = mustFind<HTMLDivElement>("#verdict");
+const addBtn = mustFind<HTMLButtonElement>("#add-option");
+
+inTarget.value = formatNumber(state.target);
+inAmount.value = formatNumber(state.amount);
+inGain.value = formatNumber(state.gain);
+
+function sortOptions() {
+  options.sort((a, b) => a.gain - b.gain);
+}
+
+function readCore() {
+  state.target = parseNumber(inTarget.value);
+  state.amount = parseNumber(inAmount.value);
+  state.gain = parseNumber(inGain.value);
+}
+
+/** Accept "1,5" or "1.5" or "1 645"; returns 0 for empty/invalid. */
+function parseNumber(s: string): number {
+  const cleaned = s.replace(",", ".").replace(/\s/g, "");
+  const n = parseFloat(cleaned);
+  return Number.isFinite(n) ? n : 0;
+}
+
+/** While typing, let "," separate decimals; switch it to "." in place. */
+function normalizeComma(el: HTMLInputElement): void {
+  if (!el.value.includes(",")) return;
+  const start = el.selectionStart ?? el.value.length;
+  const end = el.selectionEnd ?? start;
+  el.value = el.value.replace(/,/g, ".");
+  el.setSelectionRange(start, end);
+}
+
+/** Wire comma handling plus show-raw-while-focused / group-on-blur. */
+function bindNumeric(el: HTMLInputElement, onCommit: () => void): void {
+  el.addEventListener("focus", () => {
+    el.value = String(parseNumber(el.value));
+    el.select();
+  });
+  el.addEventListener("input", () => {
+    normalizeComma(el);
+    onCommit();
+  });
+  const formatCommitted = () => {
+    el.value = formatNumber(parseNumber(el.value));
+  };
+  el.addEventListener("change", formatCommitted);
+  el.addEventListener("blur", formatCommitted);
+}
+
+function render() {
+  const evalResult = evaluate(state, options);
+
+  baselineEl.innerHTML = `
+    <span class="baseline__value">${formatMinutes(evalResult.baselineSeconds)}</span>
+  `;
+
+  rowsEl.innerHTML = "";
+  const n = options.length;
+  const minPayback = evalResult.results.reduce(
+    (m, r) => Math.min(m, paybackSeconds(r.option)),
+    Infinity,
+  );
+  for (const [i, r] of evalResult.results.entries()) {
+    const isBest = evalResult.bestOption?.option === r.option;
+    const paysBackBeforeBaseline =
+      minPayback !== Infinity && minPayback < evalResult.baselineSeconds;
+    const isBestPayback =
+      paysBackBeforeBaseline && paybackSeconds(r.option) === minPayback;
+    const row = document.createElement("div");
+    row.className = `row${isBest ? " row--best" : ""}`;
+    row.setAttribute("role", "row");
+    row.innerHTML = `
+      <span class="cell-name">
+        <input type="text" class="opt-name" data-index="${i}" tabindex="${i + 4}" value="${escapeHtml(r.option.name)}" />
+      </span>
+      <span><input type="text" class="opt-gain" inputmode="decimal" autocomplete="off" spellcheck="false" data-index="${i}" tabindex="${n + i + 4}" value="${formatNumber(r.option.gain)}" /></span>
+      <span><input type="text" class="opt-cost" inputmode="decimal" autocomplete="off" spellcheck="false" data-index="${i}" tabindex="${2 * n + i + 4}" value="${formatNumber(r.option.cost)}" /></span>
+      <span class="cell-num${isBestPayback ? " payback--best" : ""}" data-label="Payback: ">${formatMinutesOnly(paybackSeconds(r.option))}</span>
+      <span class="cell-num" data-label="Wait to afford: ">${formatMinutesOnly(r.waitSeconds)}</span>
+      <span class="cell-num cell-target">
+        <span class="target-delta delta ${r.deltaSeconds < 0 ? "delta--good" : r.deltaSeconds > 0 ? "delta--bad" : ""}" data-label="Vs. waiting: ">${formatDeltaPlain(r.deltaSeconds)}</span>
+      </span>
+    `;
+    rowsEl.appendChild(row);
+  }
+
+  updateVerdict(evalResult);
+  attachRowListeners();
+}
+
+/** Patch derived cells and ranking in place so editing an input never rebuilds
+ *  the row DOM (which would steal focus). Input values are left untouched. */
+function updateEval() {
+  const evalResult = evaluate(state, options);
+  const resultByIndex = new Map(evalResult.results.map((r, i) => [i, r]));
+  const minPayback = evalResult.results.reduce(
+    (m, r) => Math.min(m, paybackSeconds(r.option)),
+    Infinity,
+  );
+
+  rowsEl.querySelectorAll<HTMLDivElement>(".row").forEach((rowEl) => {
+    if (rowEl.classList.contains("row--head")) return;
+    const indexEl = rowEl.querySelector<HTMLElement>("[data-index]");
+    if (!indexEl) return;
+    const index = Number(indexEl.dataset.index);
+    const r = resultByIndex.get(index);
+    if (!r) return;
+    rowEl.classList.toggle(
+      "row--best",
+      evalResult.bestOption?.option === r.option,
+    );
+    const cells = rowEl.querySelectorAll<HTMLElement>(".cell-num");
+    cells[0].textContent = formatMinutesOnly(paybackSeconds(r.option));
+    const paysBackBeforeBaseline =
+      minPayback !== Infinity && minPayback < evalResult.baselineSeconds;
+    cells[0].classList.toggle(
+      "payback--best",
+      paysBackBeforeBaseline && paybackSeconds(r.option) === minPayback,
+    );
+    cells[1].textContent = formatMinutesOnly(r.waitSeconds);
+    const delta = mustFind<HTMLElement>(".target-delta", cells[2]);
+    delta.textContent = formatDeltaPlain(r.deltaSeconds);
+    delta.classList.toggle("delta--good", r.deltaSeconds < 0);
+    delta.classList.toggle("delta--bad", r.deltaSeconds > 0);
+  });
+
+  mustFind<HTMLElement>(".baseline__value", baselineEl).textContent =
+    formatMinutes(evalResult.baselineSeconds);
+  updateVerdict(evalResult);
+}
+
+function updateVerdict(evalResult: Evaluation) {
+  const show = options.length > 0 && !evalResult.bestOption;
+  verdictEl.hidden = !show;
+  verdictEl.innerHTML = show
+    ? `<p><strong>Wait.</strong> None of the current options beat reaching the target on your own.</p>`
+    : "";
+}
+
+function attachRowListeners() {
+  rowsEl.querySelectorAll<HTMLInputElement>(".opt-name").forEach((el) => {
+    el.addEventListener("focus", () => el.select());
+    el.addEventListener("input", () => {
+      const opt = options[Number(el.dataset.index)];
+      if (opt) opt.name = el.value;
+    });
+    el.addEventListener("change", () => {
+      if (options[Number(el.dataset.index)].name === "") {
+        options.splice(Number(el.dataset.index), 1);
+        render();
+      }
+    });
+  });
+
+  rowsEl.querySelectorAll<HTMLInputElement>(".opt-gain").forEach((el) => {
+    bindNumeric(el, () => {
+      const opt = options[Number(el.dataset.index)];
+      if (opt) opt.gain = parseNumber(el.value);
+      updateEval();
+    });
+    el.addEventListener("change", () => {
+      sortOptions();
+      render();
+    });
+  });
+
+  rowsEl.querySelectorAll<HTMLInputElement>(".opt-cost").forEach((el) => {
+    bindNumeric(el, () => {
+      const opt = options[Number(el.dataset.index)];
+      if (opt) opt.cost = parseNumber(el.value);
+      updateEval();
+    });
+  });
+}
+
+function escapeHtml(s: string): string {
+  const div = document.createElement("div");
+  div.textContent = s;
+  return div.innerHTML;
+}
+
+[inTarget, inAmount, inGain].forEach((el) => {
+  bindNumeric(el, () => {
+    readCore();
+    render();
+  });
+});
+
+addBtn.addEventListener("click", () => {
+  options.push({
+    name: "X",
+    gain: 1,
+    cost: 100,
+  });
+  sortOptions();
+  render();
+});
+
+readCore();
+sortOptions();
+render();

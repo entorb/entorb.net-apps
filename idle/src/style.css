@@ -1,0 +1,272 @@
+@import url("https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;1,500&family=IBM+Plex+Mono:wght@400;500;600&display=swap");
+
+:root {
+  --paper: #f2efe4;
+  --paper-raised: #faf8ef;
+  --ink: #23291f;
+  --ink-soft: #5b5c4d;
+  --rule: #c9c2a8;
+  --green: #2f6f4e;
+  --green-wash: #e3ead9;
+  --brick: #9c4430;
+  --brick-wash: #f2e2dc;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "Lora", Georgia, serif;
+  line-height: 1.45;
+}
+
+#app {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 48px 24px 96px;
+}
+
+.ledger__head h1 {
+  font-size: 1.9rem;
+  font-weight: 600;
+  margin: 0 0 4px;
+  letter-spacing: 0.01em;
+}
+
+.ledger__sub {
+  margin: 0 0 32px;
+  color: var(--ink-soft);
+  font-style: italic;
+  font-size: 1rem;
+}
+
+.rowbox {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 20px 0 24px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.corebox {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  flex: 1;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field span {
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+}
+
+input {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 1rem;
+  color: var(--ink);
+  background: var(--paper-raised);
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  padding: 8px 10px;
+  width: 100%;
+}
+
+input:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: 1px;
+}
+
+.baseline {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  padding-left: 24px;
+  border-left: 1px solid var(--rule);
+}
+
+.baseline__label {
+  color: var(--ink-soft);
+  font-size: 0.95rem;
+}
+
+.baseline__value {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.options {
+  padding-top: 28px;
+}
+
+.options__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.options__head h2 {
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+#add-option {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.85rem;
+  background: transparent;
+  border: 1px solid var(--ink);
+  color: var(--ink);
+  border-radius: 2px;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+#add-option:hover {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.table {
+  border-top: 1px solid var(--ink);
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1.6fr 0.9fr 0.9fr 1.1fr 1.2fr 1.2fr;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 4px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.row--head {
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+  padding-top: 8px;
+  padding-bottom: 8px;
+  text-align: center;
+}
+
+.head-ttt {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.head-sub {
+  font-size: 0.7rem;
+}
+
+.row--best {
+  background: var(--green-wash);
+}
+
+.cell-name input {
+  font-family: "Lora", serif;
+}
+
+.cell-num {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.88rem;
+  text-align: right;
+}
+
+.payback--best {
+  font-weight: 600;
+}
+
+.cell-target {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  line-height: 1.3;
+}
+
+.target-delta {
+  font-size: 0.75rem;
+}
+
+.delta {
+  font-weight: 600;
+}
+
+.delta--good {
+  color: var(--green);
+}
+
+.delta--bad {
+  color: var(--brick);
+}
+
+.verdict {
+  margin-top: 28px;
+  padding: 18px 20px;
+  border: 1px solid var(--ink);
+  background: var(--paper-raised);
+}
+
+.verdict p {
+  margin: 0;
+  font-size: 1.02rem;
+}
+
+.foot {
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid var(--rule);
+  text-align: center;
+}
+
+.foot a {
+  color: var(--green);
+  font-size: 0.9rem;
+}
+@media (max-width: 720px) {
+  .rowbox {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .corebox {
+    grid-template-columns: 1fr;
+  }
+  .baseline {
+    align-items: flex-start;
+    padding-left: 0;
+    border-left: none;
+  }
+  .row {
+    grid-template-columns: 1fr;
+    row-gap: 6px;
+    padding: 14px 4px;
+  }
+  .row--head {
+    display: none;
+  }
+  .cell-num {
+    text-align: left;
+  }
+  .cell-num::before {
+    content: attr(data-label);
+  }
+  .cell-target {
+    align-items: flex-start;
+  }
+  .cell-target .target-delta::before {
+    content: attr(data-label);
+  }
+}
