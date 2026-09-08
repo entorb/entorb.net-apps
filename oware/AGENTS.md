@@ -10,6 +10,8 @@ Per-language detail lives in `python/AGENTS.md`, `web/AGENTS.md`, and `go/AGENTS
 
 Do not scan the repo at the start of a new session — wait for an explicit task instead. In particular, run no directory listings (`ls`, the directory `Read`) and no global `Glob`/`Grep` passes before a task is given; they only burn tokens. `Glob`/`Grep` are fine once a task names a target.
 
+Ask the user whenever the requirements are unclear
+
 ## Verification
 
 All check scripts run from the repo root. After each task run `scripts/chk_py_lint.sh` and fix all findings. If findings: improve `AGENTS.md` to prevent same issue in future.
@@ -18,8 +20,7 @@ After a new feature is added run all checks via `scripts/run_checks.sh` and fix 
 
 ## File layout
 
-- Root: `.gitignore`, `.pre-commit-config.yaml`, `AGENTS.md`, `README.md`, `rules-this-game.md`, `rules-online.md`, `cspell-words.txt`, `cspell.config.yaml`, `python/`, `web/`, `go/`, `tmp/`
-- `scripts/`: shared check scripts (`run_checks.sh`, `chk_py_*.sh`, `chk_js_*.sh`, `chk_go_*.sh`, `chk_pre-commit.sh`) and `gen_model_ranking.py` (run via `uv run --project python ...`)
+- `scripts/`: shared check scripts (`run_checks.sh`, `chk_py_*.sh`, `chk_js_*.sh`, `chk_go_*.sh`, `chk_pre-commit.sh`) and generator launchers `gen_opening_moves.sh` -> `sim-opening-moves.md` and `gen_model_ranking.sh` -> `sim-model-ranking.md`
 - `python/`, `web/`, and `go/` layouts: see the respective `AGENTS.md`.
 
 ## Architecture

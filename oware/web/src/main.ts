@@ -11,6 +11,7 @@ import {
   renderEditPanel,
   renderForecast,
   renderRulesModal,
+  renderSimulationsModal,
   renderStatus,
 } from "./ui";
 
@@ -21,6 +22,7 @@ let modeB: SideMode = "random";
 let computerTimer = 0;
 let editing = false;
 let showingRules = false;
+let showingSim = false;
 
 // biome-ignore lint/style/noNonNullAssertion: elements exist in index.html
 const controlsEl = document.getElementById("controls")!;
@@ -57,6 +59,7 @@ function init(): void {
       },
       () => resetGame(),
       openRules,
+      openSim,
     ),
   );
   document.addEventListener("keydown", onKeyDown);
@@ -67,6 +70,7 @@ function init(): void {
 function onKeyDown(e: KeyboardEvent): void {
   if (e.key !== "Escape") return;
   if (showingRules) closeRules();
+  else if (showingSim) closeSim();
   else if (editing) cancelEdit();
 }
 
@@ -100,6 +104,8 @@ function render(): void {
   }
   if (showingRules) {
     rulesEl.replaceChildren(renderRulesModal(ruleset, closeRules));
+  } else if (showingSim) {
+    rulesEl.replaceChildren(renderSimulationsModal(closeSim));
   } else {
     rulesEl.replaceChildren();
   }
@@ -120,6 +126,7 @@ function openEdit(): void {
 
 function openRules(): void {
   window.clearTimeout(computerTimer);
+  showingSim = false;
   showingRules = true;
   render();
   const closeBtn = document.querySelector<HTMLButtonElement>("#rules-close");
@@ -131,6 +138,22 @@ function closeRules(): void {
   render();
   scheduleComputer();
   document.getElementById("info-btn")?.focus();
+}
+
+function openSim(): void {
+  window.clearTimeout(computerTimer);
+  showingRules = false;
+  showingSim = true;
+  render();
+  const closeBtn = document.querySelector<HTMLButtonElement>("#sims-close");
+  closeBtn?.focus();
+}
+
+function closeSim(): void {
+  showingSim = false;
+  render();
+  scheduleComputer();
+  document.getElementById("sim-btn")?.focus();
 }
 
 function cancelEdit(): void {
