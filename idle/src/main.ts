@@ -1,5 +1,6 @@
 import "./style.css";
 import {
+  bestSequences,
   type Evaluation,
   evaluate,
   formatDeltaPlain,
@@ -66,6 +67,11 @@ app.innerHTML = `
     </section>
 
 <section class="verdict" id="verdict" aria-live="polite"></section>
+
+    <section class="sequences" id="sequences" aria-live="polite" hidden>
+      <h2>Best purchase sequences</h2>
+      <ol class="seq-list" id="seq-list"></ol>
+    </section>
   </main>
 `;
 
@@ -75,6 +81,8 @@ const inGain = mustFind<HTMLInputElement>("#in-gain");
 const rowsEl = mustFind<HTMLDivElement>("#rows");
 const baselineEl = mustFind<HTMLDivElement>("#baseline");
 const verdictEl = mustFind<HTMLDivElement>("#verdict");
+const sequencesEl = mustFind<HTMLDivElement>("#sequences");
+const seqListEl = mustFind<HTMLOListElement>("#seq-list");
 const addBtn = mustFind<HTMLButtonElement>("#add-option");
 
 inTarget.value = formatNumber(state.target);
@@ -107,7 +115,9 @@ function normalizeComma(el: HTMLInputElement): void {
   el.setSelectionRange(start, end);
 }
 
-/** Wire comma handling plus show-raw-while-focused / group-on-blur. */
+/** Wire comma handling plus show-raw-while-focused / group+recalc on commit.
+ *  Recalc happens once, on Enter or leaving the field (the `change` event fires
+ *  for both), never per keystroke. */
 function bindNumeric(el: HTMLInputElement, onCommit: () => void): void {
   el.addEventListener("focus", () => {
     el.value = String(parseNumber(el.value));
@@ -115,12 +125,14 @@ function bindNumeric(el: HTMLInputElement, onCommit: () => void): void {
   });
   el.addEventListener("input", () => {
     normalizeComma(el);
-    onCommit();
   });
   const formatCommitted = () => {
     el.value = formatNumber(parseNumber(el.value));
   };
-  el.addEventListener("change", formatCommitted);
+  el.addEventListener("change", () => {
+    formatCommitted();
+    onCommit();
+  });
   el.addEventListener("blur", formatCommitted);
 }
 
@@ -162,6 +174,7 @@ function render() {
   }
 
   updateVerdict(evalResult);
+  updateSequences();
   attachRowListeners();
 }
 
@@ -204,6 +217,7 @@ function updateEval() {
   mustFind<HTMLElement>(".baseline__value", baselineEl).textContent =
     formatMinutes(evalResult.baselineSeconds);
   updateVerdict(evalResult);
+  updateSequences();
 }
 
 function updateVerdict(evalResult: Evaluation) {
@@ -212,6 +226,26 @@ function updateVerdict(evalResult: Evaluation) {
   verdictEl.innerHTML = show
     ? `<p><strong>Wait.</strong> None of the current options beat reaching the target on your own.</p>`
     : "";
+}
+
+function updateSequences() {
+  const sequences = bestSequences(state, options).slice(0, 3);
+  sequencesEl.hidden = sequences.length === 0;
+  seqListEl.innerHTML = sequences
+    .map(
+      (s, i) => `
+      <li class="seq-item">
+        <span class="seq-rank">${i + 1}</span>
+        <span class="seq-steps">${s.purchases
+          .map(
+            (step) =>
+              `${escapeHtml(step.option.name)}<span class="seq-step-wait">${step.waitSeconds > 0 ? ` (+${formatMinutesOnly(step.waitSeconds)})` : " (now)"}</span>`,
+          )
+          .join('<span class="seq-arrow">→</span>')}</span>
+        <span class="seq-time">${formatMinutes(s.totalSeconds)}</span>
+      </li>`,
+    )
+    .join("");
 }
 
 function attachRowListeners() {

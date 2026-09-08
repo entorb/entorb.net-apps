@@ -94,6 +94,113 @@ export function paybackSeconds(option: Investment): number {
   return option.gain > 0 ? option.cost / option.gain : Infinity;
 }
 
+interface PurchaseStep {
+  option: Investment;
+  /** seconds waited until this option could be bought (0 if affordable now) */
+  waitSeconds: number;
+}
+
+export interface SequenceResult {
+  purchases: PurchaseStep[];
+  totalSeconds: number;
+  /** totalSeconds minus the no-purchase baseline; negative = time saved */
+  deltaSeconds: number;
+}
+
+/** Simulate buying each of `purchases` in order: each purchase costs budget and
+ *  adds gain before the next, so the order changes the outcome. Returns the
+ *  total seconds from now until target, stepping the state in place. */
+function simulateSequence(
+  state: CoreState,
+  purchases: Investment[],
+  steps: PurchaseStep[],
+): number {
+  let amount = state.amount;
+  let gain = state.gain;
+  let total = 0;
+
+  for (const option of purchases) {
+    let waitSeconds: number;
+    if (amount >= option.cost) {
+      waitSeconds = 0;
+      amount -= option.cost;
+    } else {
+      waitSeconds = secondsToTarget(option.cost, amount, gain);
+      amount = 0; // spent every last unit to just afford it
+    }
+    gain += option.gain;
+    if (waitSeconds === Infinity) return Infinity;
+    total += waitSeconds;
+    steps.push({ option, waitSeconds });
+  }
+
+  const afterPurchase = secondsToTarget(state.target, amount, gain);
+  return afterPurchase === Infinity ? Infinity : total + afterPurchase;
+}
+
+function permutations(
+  options: Investment[],
+  k: number,
+  start: number,
+  used: boolean[],
+  current: Investment[],
+  out: Investment[][],
+): void {
+  if (current.length === k) {
+    out.push([...current]);
+    return;
+  }
+  for (let i = start; i < options.length; i++) {
+    if (used[i]) continue;
+    used[i] = true;
+    current.push(options[i]);
+    permutations(options, k, start + 1, used, current, out);
+    current.pop();
+    used[i] = false;
+  }
+}
+
+/** Enumerate every ordered sequence of 1..maxPurchases distinct options and
+ *  return the ones that beat the no-purchase baseline, best first. */
+export function bestSequences(
+  state: CoreState,
+  options: Investment[],
+  maxPurchases = 3,
+): SequenceResult[] {
+  const baselineSeconds = secondsToTarget(
+    state.target,
+    state.amount,
+    state.gain,
+  );
+
+  const sequences: Investment[][] = [];
+  const max = Math.min(maxPurchases, options.length);
+  for (let k = 1; k <= max; k++) {
+    permutations(
+      options,
+      k,
+      0,
+      new Array(options.length).fill(false),
+      [],
+      sequences,
+    );
+  }
+
+  const results: SequenceResult[] = [];
+  for (const seq of sequences) {
+    const steps: PurchaseStep[] = [];
+    const totalSeconds = simulateSequence(state, seq, steps);
+    if (totalSeconds === Infinity || totalSeconds >= baselineSeconds) continue;
+    results.push({
+      purchases: steps,
+      totalSeconds,
+      deltaSeconds: totalSeconds - baselineSeconds,
+    });
+  }
+
+  return results.sort((a, b) => a.totalSeconds - b.totalSeconds);
+}
+
 export function formatMinutes(seconds: number): string {
   if (seconds === Infinity) return "never (no gain)";
   if (seconds === 0) return "already reached";
