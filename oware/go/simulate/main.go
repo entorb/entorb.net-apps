@@ -4,7 +4,7 @@
 //
 // Usage: go run ./simulate [-n N] [-seed S] [-workers W] [-starting A|B]
 //
-//	[-A=random|greedy] [-B=random|greedy] [-trace] [-openings]
+//	[-A=random|greedy] [-B=random|greedy] [-trace] [-openings] [-openings-md]
 package main
 
 import (
@@ -12,6 +12,7 @@ import (
 	"fmt"
 	"math/rand/v2"
 	"os"
+	"path/filepath"
 	"runtime"
 	"strings"
 	"sync"
@@ -29,6 +30,7 @@ var (
 	starting    = flag.String("starting", "A", "beginning player, whose first move opens (A or B)")
 	modeA       = flag.String("A", "random", "Player A computer mode; value required (random or greedy)")
 	modeB       = flag.String("B", "random", "Player B computer mode; value required (random or greedy)")
+	openingsMD  = flag.Bool("openings-md", false, "with -openings, merge this run's ranking into ../sim-opening-moves.md")
 )
 
 func main() {
@@ -46,6 +48,10 @@ func main() {
 	greedyB, err := parseMode(*modeB)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
+		os.Exit(2)
+	}
+	if *openingsMD && !*showOpening {
+		fmt.Fprintln(os.Stderr, "-openings-md requires -openings")
 		os.Exit(2)
 	}
 	if *showTrace {
@@ -175,10 +181,25 @@ func pickMove(r *rand.Rand, state oware.State, greedyA, greedyB bool) int {
 	return pits[r.IntN(len(pits))]
 }
 
+// openingRow is one opening pit's rollout tally.
+type openingRow struct {
+	pit   int
+	winsS uint64
+	winsO uint64
+	draws uint64
+	total uint64
+}
+
+// opponentModes is the fixed section order of sim-opening-moves.md.
+var opponentModes = []string{"greedy", "random"}
+
+const openingMDName = "sim-opening-moves.md"
+
 // openingRanking rolls out -n games per first move of the --starting side;
 // play after the opening follows the -A/-B modes (default uniform random) and
 // reports the beginning player's win rate per opening. UI pit numbers are 1..6,
-// matching python/_ui_pit.
+// matching python/_ui_pit. With -openings-md the run is also merged into
+// ../sim-opening-moves.md under its own "### Versus <B mode> opponent" section.
 func openingRanking(starter oware.Player, greedyA, greedyB bool) {
 	baseSeed := *seed
 	if baseSeed == 0 {
@@ -195,6 +216,7 @@ func openingRanking(starter oware.Player, greedyA, greedyB bool) {
 	best := -1
 	bestRate := -1.0
 	var totalRate float64
+	rows := make([]openingRow, 0, oware.PitsPerSide)
 	for opener := 0; opener < oware.PitsPerSide; opener++ {
 		first, _ := oware.Play(oware.Start(starter), opener+offset)
 		var winsS, winsO, draws atomic.Uint64
@@ -223,6 +245,7 @@ func openingRanking(starter oware.Player, greedyA, greedyB bool) {
 		rate := float64(winsS.Load()) / float64(total)
 		fmt.Printf("opening pit %d: %s %.2f%% | %s %.2f%% | draw %.2f%%\n",
 			opener+1, starter, ratio(winsS.Load(), total), starter.Opponent(), ratio(winsO.Load(), total), ratio(draws.Load(), total))
+		rows = append(rows, openingRow{pit: opener + 1, winsS: winsS.Load(), winsO: winsO.Load(), draws: draws.Load(), total: total})
 		totalRate += rate
 		if rate > bestRate {
 			best, bestRate = opener, rate
@@ -233,6 +256,105 @@ func openingRanking(starter oware.Player, greedyA, greedyB bool) {
 	fmt.Printf("best opening: pit %d — %s wins %.2f%% (mean over openings %.2f%%, edge %+.2f pts)\n",
 		best+1, starter, 100*bestRate, 100*mean, 100*(bestRate-mean))
 	fmt.Printf("tip for the %s starting player: open from pit %d.\n", starter, best+1)
+	if *openingsMD {
+		mode := modeLabel(greedyB)
+		if err := writeOpeningMD(mode, openingSection(starter, mode, rows, best, bestRate, mean)); err != nil {
+			fmt.Fprintf(os.Stderr, "writing %s: %v\n", openingMDName, err)
+			os.Exit(1)
+		}
+		fmt.Printf("merged this run into ../%s\n", openingMDName)
+	}
+}
+
+// openingSection renders this run's ranking as one markdown section body.
+func openingSection(starter oware.Player, mode string, rows []openingRow, bestPit int, bestRate, mean float64) string {
+	var b strings.Builder
+	fmt.Fprintf(&b, "Post-opening play A=random, B=%s.\n\n", mode)
+	fmt.Fprintf(&b, "| Pit | %s wins | %s wins | Draw |\n", starter, starter.Opponent())
+	b.WriteString("|---|---|---|---|\n")
+	for _, row := range rows {
+		fmt.Fprintf(&b, "| %d | %.2f%% | %.2f%% | %.2f%% |\n",
+			row.pit, ratio(row.winsS, row.total), ratio(row.winsO, row.total), ratio(row.draws, row.total))
+	}
+	fmt.Fprintf(&b, "\nBest opening: pit %d \u2014 %s wins %.2f%% (mean over openings %.2f%%, edge %+.2f pts).\n",
+		bestPit+1, starter, 100*bestRate, 100*mean, 100*(bestRate-mean))
+	return b.String()
+}
+
+// parseOpeningFile extracts each "### Versus <mode> opponent" section body,
+// keyed by opponent mode, from an existing sim-opening-moves.md.
+func parseOpeningFile(content string) map[string]string {
+	sections := make(map[string]string)
+	var mode string
+	var body strings.Builder
+	flush := func() {
+		if mode != "" {
+			sections[mode] = strings.TrimSpace(body.String())
+		}
+		mode = ""
+		body.Reset()
+	}
+	for _, raw := range strings.Split(content, "\n") {
+		line := strings.TrimRight(raw, "\r")
+		if strings.HasPrefix(line, "### ") {
+			flush()
+			fields := strings.Fields(line)
+			if len(fields) >= 3 && fields[1] == "versus" {
+				mode = fields[2]
+			}
+			continue
+		}
+		if mode != "" {
+			body.WriteString(line)
+			body.WriteString("\n")
+		}
+	}
+	flush()
+	return sections
+}
+
+// composeOpeningMD assembles the full report from the per-mode sections,
+// always in the fixed opponentModes order.
+func composeOpeningMD(sections map[string]string) string {
+	var b strings.Builder
+	b.WriteString("# Simulation of opening moves\n\n")
+	fmt.Fprintf(&b, "%s rollouts per opening move (seed %d).\n\n", grouped(*games), *seed)
+	b.WriteString("## Anan-Anan\n\n")
+	for _, mode := range opponentModes {
+		body, ok := sections[mode]
+		if !ok {
+			continue
+		}
+		fmt.Fprintf(&b, "### Versus %s opponent\n\n", mode)
+		b.WriteString(strings.TrimSpace(body))
+		b.WriteString("\n\n")
+	}
+	return b.String()
+}
+
+// grouped inserts thousands separators into a non-negative integer.
+func grouped(n int) string {
+	s := fmt.Sprint(n)
+	if n < 1000 {
+		return s
+	}
+	return grouped(n/1000) + "," + fmt.Sprintf("%03d", n%1000)
+}
+
+// writeOpeningMD replaces this run's section in ../sim-opening-moves.md, keeping
+// the other opponent mode's section and regenerating the preamble.
+func writeOpeningMD(mode, section string) error {
+	path := filepath.Join("..", openingMDName)
+	sections := make(map[string]string)
+	content, err := os.ReadFile(path)
+	switch {
+	case err == nil:
+		sections = parseOpeningFile(string(content))
+	case !os.IsNotExist(err):
+		return err
+	}
+	sections[mode] = section
+	return os.WriteFile(path, []byte(composeOpeningMD(sections)), 0o644)
 }
 
 // traceGame plays one deterministic game (always the lowest movable pit,

@@ -1,10 +1,12 @@
 Abapa
 Anan
+biomejs
 captureless
 Climent
 deadcode
 Docstrings
 eabi
+entorb
 esbuild
 estree
 fdir

@@ -24,7 +24,13 @@ go run ./simulate -A=greedy             # Player A greedy vs random B
 go run ./simulate -starting=B -B=greedy # B opens, B greedy, A random
 go run ./simulate -openings             # rank the six first moves by win rate
 go run ./simulate -openings -B=greedy   # best opening vs a greedy opponent
+go run ./simulate -openings -B=greedy -openings-md # merge ranking into ../sim-opening-moves.md
 ```
+
+`-openings-md` merges the run's ranking section into `../sim-opening-moves.md` at the
+repo root (regenerating the preamble, keeping the other opponent mode's section).
+`scripts/gen_opening_moves.sh` runs both opponent modes to build the whole
+report. The web app renders `sim-opening-moves.md` read-only.
 
 Parity against the Python engine: `go run ./simulate -trace` must equal
 `PYTHONPATH=python/src uv run --project python python tmp/parity.py`

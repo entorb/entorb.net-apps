@@ -6,7 +6,7 @@ Entry point: `uv run oware` (console script → `oware.__main__:main`). Run from
 
 ## Layout
 
-- `python/`: `.python-version`, `model-ranking.md`, `pyproject.toml`, `ruff.toml`, `uv.lock`
+- `python/`: `.python-version`, `pyproject.toml`, `ruff.toml`, `uv.lock`
   - `python/src/oware/`: `__init__.py`, `__main__.py` (CLI), `computer.py` (modes), `models.py` (value objects)
   - `python/tests/`: `test_abapa.py`, `test_anan.py`, `test_auto.py`, `test_cli.py`, `test_computer.py`, `test_models.py`
 
@@ -19,7 +19,7 @@ Entry point: `uv run oware` (console script → `oware.__main__:main`). Run from
 
 Run from the repo root: `scripts/chk_py_*.sh` (lint = `ruff format` + `ruff check`, plus test, types/pyright, dead code, package audit). The shared verification policy lives in the root `AGENTS.md`.
 
-`scripts/gen_model_ranking.py` (regenerates `model-ranking.md`; deterministic round-robin, RANDOM excluded) is run via `uv run --project python scripts/gen_model_ranking.py`.
+`python/gen_model_ranking.py` (regenerates `sim-model-ranking.md`; deterministic round-robin, RANDOM excluded) is run via `scripts/gen_model_ranking.sh`.
 
 ## Ruff pitfalls (`select = ["ALL"]` rules that commonly bite)
 

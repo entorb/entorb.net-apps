@@ -1,6 +1,7 @@
 import type { GameState, Player, Ruleset } from "./models";
 import { moveGains, SEEDS_TOTAL } from "./models";
 import { rulesFor } from "./rules";
+import { simulationsFor } from "./simulations";
 
 const MODE_OPTIONS = [
   "human",
@@ -20,6 +21,7 @@ export function renderControls(
   onModeB: (m: SideMode) => void,
   onStart: () => void,
   onInfo: () => void,
+  onSim: () => void,
 ): HTMLElement {
   const wrap = document.createElement("div");
   wrap.className = "controls";
@@ -49,11 +51,21 @@ export function renderControls(
   infoBtn.setAttribute("aria-label", "How to play");
   infoBtn.addEventListener("click", onInfo);
 
+  const simBtn = document.createElement("button");
+  simBtn.textContent = "?";
+  simBtn.id = "sim-btn";
+  simBtn.className = "info-btn";
+  simBtn.type = "button";
+  simBtn.title = "Simulation results";
+  simBtn.setAttribute("aria-label", "Simulation results");
+  simBtn.addEventListener("click", onSim);
+
   wrap.append(
     field("Rules", rulesetSel),
     infoBtn,
     field("Player A", modeASel),
     field("Player B", modeBSel),
+    simBtn,
     startBtn,
   );
   return wrap;
@@ -185,6 +197,35 @@ export function renderRulesModal(
   const close = document.createElement("button");
   close.type = "button";
   close.id = "rules-close";
+  close.textContent = "Close";
+  close.addEventListener("click", onClose);
+  buttons.appendChild(close);
+  box.appendChild(buttons);
+
+  overlay.addEventListener("click", (e) => {
+    if (e.target === overlay) onClose();
+  });
+
+  overlay.appendChild(box);
+  return overlay;
+}
+
+export function renderSimulationsModal(onClose: () => void): HTMLElement {
+  const overlay = document.createElement("div");
+  overlay.className = "modal-overlay";
+
+  const box = document.createElement("div");
+  box.className = "modal sim-modal";
+  box.setAttribute("role", "dialog");
+  box.setAttribute("aria-modal", "true");
+  box.setAttribute("aria-label", "Simulation results");
+  box.append(...simulationsFor());
+
+  const buttons = document.createElement("div");
+  buttons.className = "modal-buttons";
+  const close = document.createElement("button");
+  close.type = "button";
+  close.id = "sims-close";
   close.textContent = "Close";
   close.addEventListener("click", onClose);
   buttons.appendChild(close);

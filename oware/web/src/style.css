@@ -67,6 +67,7 @@ h1 {
 .field select,
 #start-btn,
 #info-btn,
+#sim-btn,
 #edit-btn,
 .modal-buttons button {
   padding: 0.4rem 0.6rem;
@@ -86,18 +87,20 @@ h1 {
 
 #start-btn,
 #info-btn,
+#sim-btn,
 #edit-btn,
 .modal-buttons button {
   cursor: pointer;
 }
 
 #start-btn:hover,
+#sim-btn:hover,
 #edit-btn:hover,
 .modal-buttons button:hover {
   background: var(--panel-hover);
 }
 
-#info-btn {
+.info-btn {
   width: 2.1rem;
   height: 2.1rem;
   padding: 0;
@@ -110,7 +113,7 @@ h1 {
   line-height: 1;
 }
 
-#info-btn:hover {
+.info-btn:hover {
   background: #3d5270;
   border-color: #52709b;
 }
@@ -502,6 +505,71 @@ h1 {
 
 .rules-list li::marker {
   color: var(--ring);
+}
+
+.sim-modal {
+  width: min(620px, 94vw);
+}
+
+.sim-modal h3 {
+  margin: 1.3rem 0 0.3rem;
+  font-size: 1.05rem;
+  color: var(--ring);
+}
+
+.sim-modal h4 {
+  margin: 1.2rem 0 0.3rem;
+  font-size: 0.95rem;
+  color: var(--accent-a);
+  text-transform: capitalize;
+}
+
+.sim-modal p {
+  margin: 0.5rem 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.sim-divider {
+  border: none;
+  border-top: 1px solid var(--panel-border);
+  margin: 1.6rem 0;
+}
+
+.sim-table-wrap {
+  max-height: 40vh;
+  overflow-x: auto;
+  overflow-y: auto;
+  margin: 0.6rem 0 1rem;
+}
+
+.sim-table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.9rem;
+}
+
+.sim-table th,
+.sim-table td {
+  border: 1px solid var(--panel-border);
+  padding: 0.4rem 0.6rem;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.sim-table th {
+  background: #32445c;
+  color: var(--ring);
+  font-weight: 600;
+}
+
+.sim-table td {
+  font-variant-numeric: tabular-nums;
+}
+
+.sim-table tr:nth-child(even) td {
+  background: #31425a;
 }
 
 .foot {

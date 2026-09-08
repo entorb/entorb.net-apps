@@ -1,5 +1,5 @@
 """
-Generate model-ranking.md from round-robin computer-vs-computer games.
+Generate sim-model-ranking.md from round-robin computer-vs-computer games.
 
 Each ruleset (mode 1 = Anan-Anan, mode 2 = Abapa) is played for every pairing
 of the deterministic computer models. Games are deterministic (pure ``play``
@@ -20,7 +20,7 @@ from oware.models import (
     tally,
 )
 
-REPORT = Path(__file__).resolve().parent.parent / "python" / "model-ranking.md"
+REPORT = Path(__file__).resolve().parent.parent / "sim-model-ranking.md"
 
 MODES = tuple(m for m in ComputerMode if m is not ComputerMode.RANDOM)
 
@@ -95,7 +95,7 @@ def _matrix(games: Pairings) -> str:
 def _report() -> str:
     """Compose the full markdown report."""
     parts = [
-        "# Model ranking",
+        "# Simulation of computer player model ranking",
         "",
     ]
     for ruleset, _mode_key in RULESETS:
@@ -108,9 +108,8 @@ def _report() -> str:
 
 
 def main() -> None:
-    """Write the model-ranking report to ``model-ranking.md``."""
+    """Write the model-ranking report to ``sim-model-ranking.md``."""
     REPORT.write_text(_report())
-    print(f"Wrote {REPORT}")
 
 
 if __name__ == "__main__":

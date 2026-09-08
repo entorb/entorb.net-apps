@@ -13,6 +13,18 @@ This repository has three independent implementations of the same rules:
 
 Both follow the shared spec in [rules-this-game.md](rules-this-game.md); [rules-online.md](rules-online.md) is the source those rules adapt.
 
+## Computer payer modes
+
+The python CLI and web app share four computer opponents (all but Random are
+deterministic); the go simulator has Greedy and Random so far:
+
+- **Random** — uniformly picks any movable pit.
+- **Greedy** — one-ply lookahead: ranks each movable pit by its capture delta. Prefers a move that captures the most seeds, then one that hands the opponent the fewest captures; lowest pit breaks ties.
+- **Greedy Response** — two-ply lookahead: assumes the opponent answers with Greedy. Ranks moves by the net capture swing over both plies, so a move whose own capture is nullified by a stronger greedy response loses to one that denies it.
+- **Minimax** — three-ply negamax search with alpha-beta pruning over an evaluation that weights captured seeds highest, then seeds kept on the own side, then mobility (non-empty own pits minus non-empty opponent pits).
+
+Computer model ranking: `scripts/gen_model_ranking.sh` regenerates [`sim-model-ranking.md`](sim-model-ranking.md) from deterministic round-robin games (RANDOM excluded).
+
 ## Python CLI
 
 Run from the repo root (or `cd python` and drop `--project python`):
@@ -37,7 +49,7 @@ uv run --project python oware -A=greedy -B=random
 
 ## Web app
 
-A static single-page app. No backend, no build-time server — `pnpm build` emits plain static files you can host anywhere.
+A static single-page app. No backend, no build-time server — `pnpm build` emits plain static files hosted at [entorb.net/oware/](https://entorb.net/oware/).
 
 ```sh
 cd web
@@ -65,16 +77,8 @@ go run ./simulate -A=greedy -B=random     # symmetric modes
 go run ./simulate -starting=B -B=greedy # B opens, B greedy
 go run ./simulate -openings               # best opening-move tip
 go run ./simulate -openings -B=greedy     # best opening vs a greedy opponent
+go run ./simulate -openings -B=greedy -openings-md  # merge ranking into ../sim-opening-moves.md
 ```
 
-## Computer modes
-
-The python CLI and web app share four computer opponents (all but Random are
-deterministic); the go simulator has Greedy and Random so far:
-
-- **Random** — uniformly picks any movable pit.
-- **Greedy** — one-ply lookahead: ranks each movable pit by its capture delta. Prefers a move that captures the most seeds, then one that hands the opponent the fewest captures; lowest pit breaks ties.
-- **Greedy Response** — two-ply lookahead: assumes the opponent answers with Greedy. Ranks moves by the net capture swing over both plies, so a move whose own capture is nullified by a stronger greedy response loses to one that denies it.
-- **Minimax** — three-ply negamax search with alpha-beta pruning over an evaluation that weights captured seeds highest, then seeds kept on the own side, then mobility (non-empty own pits minus non-empty opponent pits).
-
-Computer model ranking: `uv run --project python scripts/gen_model_ranking.py` regenerates `python/model-ranking.md` from deterministic round-robin games (RANDOM excluded).
+`scripts/gen_opening_moves.sh` regenerates [`sim-opening-moves.md`](sim-opening-moves.md) (root level,
+rendered by the web app) from the greedy and random opponent rankings.

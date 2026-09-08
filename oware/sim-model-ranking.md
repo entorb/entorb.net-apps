@@ -1,4 +1,4 @@
-# Model ranking
+# Simulation of computer player model ranking
 
 ## Anan-Anan
 
