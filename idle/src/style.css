@@ -225,6 +225,61 @@ button:focus-visible {
   font-size: 1.02rem;
 }
 
+.sequences {
+  margin-top: 28px;
+  padding: 18px 20px;
+  border: 1px solid var(--rule);
+  background: var(--paper-raised);
+}
+
+.sequences h2 {
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin: 0 0 12px;
+}
+
+.seq-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.seq-item {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: baseline;
+  gap: 14px;
+}
+
+.seq-rank {
+  font-family: "IBM Plex Mono", monospace;
+  color: var(--ink-soft);
+}
+
+.seq-steps {
+  font-family: "Lora", serif;
+}
+
+.seq-arrow {
+  color: var(--ink-soft);
+  margin: 0 4px;
+}
+
+.seq-step-wait {
+  color: var(--ink-soft);
+  font-size: 0.8rem;
+  font-family: "IBM Plex Mono", monospace;
+}
+
+.seq-time {
+  font-family: "IBM Plex Mono", monospace;
+  font-weight: 600;
+  text-align: right;
+}
+
 .foot {
   margin-top: 40px;
   padding-top: 20px;
