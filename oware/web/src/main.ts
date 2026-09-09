@@ -4,6 +4,7 @@ import { animateBoardNumbers } from "./animate"
 import { chooseMove } from "./computer"
 import type { GameState, Player, Ruleset } from "./models"
 import { finishIfNoMoves, play, startState, tally } from "./models"
+import { fetchGameCount, recordStartedGame } from "./stats"
 import type { EditRead, SideMode } from "./ui"
 import {
   collectBoardEdits,
@@ -41,6 +42,8 @@ const forecastEl = document.getElementById("forecast")!
 const editEl = document.getElementById("edit")!
 // biome-ignore lint/style/noNonNullAssertion: elements exist in index.html
 const rulesEl = document.getElementById("rules")!
+// biome-ignore lint/style/noNonNullAssertion: element exists in index.html
+const gamesCountEl = document.getElementById("games-count")!
 
 init()
 
@@ -64,14 +67,26 @@ function init(): void {
         resetGame()
       },
       onToggleAnimate,
-      () => resetGame(),
+      startGame,
       openRules,
       openSim,
     ),
   )
   document.addEventListener("keydown", onKeyDown)
   render()
+  refreshGameCount()
   scheduleComputer()
+}
+
+function startGame(): void {
+  resetGame()
+  void recordStartedGame().then(() => refreshGameCount())
+}
+
+function refreshGameCount(): void {
+  void fetchGameCount().then((count) => {
+    if (count !== null) gamesCountEl.textContent = String(count)
+  })
 }
 
 function onKeyDown(e: KeyboardEvent): void {
