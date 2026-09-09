@@ -1,11 +1,4 @@
 biomejs
-corebox
 entorb
-inputmode
-Invester
-knip
-noopener
-Oware
+oware
 prek
-Recalc
-rowbox
