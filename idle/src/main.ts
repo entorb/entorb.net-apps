@@ -10,6 +10,7 @@ import {
   paybackSeconds,
 } from "./calc"
 import { options, state } from "./const"
+import { fetchGameCount, recordStartedGame } from "./stats"
 import { load, save } from "./storage"
 
 function mustFind<T extends HTMLElement>(sel: string, root: ParentNode = document): T {
@@ -82,6 +83,7 @@ const verdictEl = mustFind<HTMLDivElement>("#verdict")
 const sequencesEl = mustFind<HTMLDivElement>("#sequences")
 const seqListEl = mustFind<HTMLOListElement>("#seq-list")
 const addBtn = mustFind<HTMLButtonElement>("#add-option")
+const gamesCountEl = mustFind<HTMLSpanElement>("#games-count")
 
 load()
 inTarget.value = formatNumber(state.target)
@@ -291,7 +293,12 @@ function escapeHtml(s: string): string {
   return div.innerHTML
 }
 
-;[inTarget, inAmount, inGain].forEach((el) => {
+bindNumeric(inTarget, () => {
+  readCore()
+  render()
+  void recordStartedGame().then(refreshGameCount)
+})
+;[inAmount, inGain].forEach((el) => {
   bindNumeric(el, () => {
     readCore()
     render()
@@ -308,6 +315,13 @@ addBtn.addEventListener("click", () => {
   render()
 })
 
+function refreshGameCount(): void {
+  void fetchGameCount().then((count) => {
+    if (count !== null) gamesCountEl.textContent = String(count)
+  })
+}
+
 readCore()
 sortOptions()
 render()
+refreshGameCount()
