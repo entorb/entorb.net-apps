@@ -1,4 +1,4 @@
-import "./style.css";
+import "./style.css"
 import {
   bestSequences,
   type Evaluation,
@@ -8,19 +8,16 @@ import {
   formatMinutesOnly,
   formatNumber,
   paybackSeconds,
-} from "./calc";
-import { options, state } from "./const";
+} from "./calc"
+import { options, state } from "./const"
 
-function mustFind<T extends HTMLElement>(
-  sel: string,
-  root: ParentNode = document,
-): T {
-  const el = root.querySelector<T>(sel);
-  if (!el) throw new Error(`Missing element: ${sel}`);
-  return el;
+function mustFind<T extends HTMLElement>(sel: string, root: ParentNode = document): T {
+  const el = root.querySelector<T>(sel)
+  if (!el) throw new Error(`Missing element: ${sel}`)
+  return el
 }
 
-const app = mustFind<HTMLDivElement>("#app");
+const app = mustFind<HTMLDivElement>("#app")
 
 app.innerHTML = `
   <main class="ledger">
@@ -73,46 +70,46 @@ app.innerHTML = `
       <ol class="seq-list" id="seq-list"></ol>
     </section>
   </main>
-`;
+`
 
-const inTarget = mustFind<HTMLInputElement>("#in-target");
-const inAmount = mustFind<HTMLInputElement>("#in-amount");
-const inGain = mustFind<HTMLInputElement>("#in-gain");
-const rowsEl = mustFind<HTMLDivElement>("#rows");
-const baselineEl = mustFind<HTMLDivElement>("#baseline");
-const verdictEl = mustFind<HTMLDivElement>("#verdict");
-const sequencesEl = mustFind<HTMLDivElement>("#sequences");
-const seqListEl = mustFind<HTMLOListElement>("#seq-list");
-const addBtn = mustFind<HTMLButtonElement>("#add-option");
+const inTarget = mustFind<HTMLInputElement>("#in-target")
+const inAmount = mustFind<HTMLInputElement>("#in-amount")
+const inGain = mustFind<HTMLInputElement>("#in-gain")
+const rowsEl = mustFind<HTMLDivElement>("#rows")
+const baselineEl = mustFind<HTMLDivElement>("#baseline")
+const verdictEl = mustFind<HTMLDivElement>("#verdict")
+const sequencesEl = mustFind<HTMLDivElement>("#sequences")
+const seqListEl = mustFind<HTMLOListElement>("#seq-list")
+const addBtn = mustFind<HTMLButtonElement>("#add-option")
 
-inTarget.value = formatNumber(state.target);
-inAmount.value = formatNumber(state.amount);
-inGain.value = formatNumber(state.gain);
+inTarget.value = formatNumber(state.target)
+inAmount.value = formatNumber(state.amount)
+inGain.value = formatNumber(state.gain)
 
 function sortOptions() {
-  options.sort((a, b) => a.gain - b.gain);
+  options.sort((a, b) => a.gain - b.gain)
 }
 
 function readCore() {
-  state.target = parseNumber(inTarget.value);
-  state.amount = parseNumber(inAmount.value);
-  state.gain = parseNumber(inGain.value);
+  state.target = parseNumber(inTarget.value)
+  state.amount = parseNumber(inAmount.value)
+  state.gain = parseNumber(inGain.value)
 }
 
 /** Accept "1,5" or "1.5" or "1 645"; returns 0 for empty/invalid. */
 function parseNumber(s: string): number {
-  const cleaned = s.replace(",", ".").replace(/\s/g, "");
-  const n = parseFloat(cleaned);
-  return Number.isFinite(n) ? n : 0;
+  const cleaned = s.replace(",", ".").replace(/\s/g, "")
+  const n = parseFloat(cleaned)
+  return Number.isFinite(n) ? n : 0
 }
 
 /** While typing, let "," separate decimals; switch it to "." in place. */
 function normalizeComma(el: HTMLInputElement): void {
-  if (!el.value.includes(",")) return;
-  const start = el.selectionStart ?? el.value.length;
-  const end = el.selectionEnd ?? start;
-  el.value = el.value.replace(/,/g, ".");
-  el.setSelectionRange(start, end);
+  if (!el.value.includes(",")) return
+  const start = el.selectionStart ?? el.value.length
+  const end = el.selectionEnd ?? start
+  el.value = el.value.replace(/,/g, ".")
+  el.setSelectionRange(start, end)
 }
 
 /** Wire comma handling plus show-raw-while-focused / group+recalc on commit.
@@ -120,44 +117,43 @@ function normalizeComma(el: HTMLInputElement): void {
  *  for both), never per keystroke. */
 function bindNumeric(el: HTMLInputElement, onCommit: () => void): void {
   el.addEventListener("focus", () => {
-    el.value = String(parseNumber(el.value));
-    el.select();
-  });
+    el.value = String(parseNumber(el.value))
+    el.select()
+  })
   el.addEventListener("input", () => {
-    normalizeComma(el);
-  });
+    normalizeComma(el)
+  })
   const formatCommitted = () => {
-    el.value = formatNumber(parseNumber(el.value));
-  };
+    el.value = formatNumber(parseNumber(el.value))
+  }
   el.addEventListener("change", () => {
-    formatCommitted();
-    onCommit();
-  });
-  el.addEventListener("blur", formatCommitted);
+    formatCommitted()
+    onCommit()
+  })
+  el.addEventListener("blur", formatCommitted)
 }
 
 function render() {
-  const evalResult = evaluate(state, options);
+  const evalResult = evaluate(state, options)
 
   baselineEl.innerHTML = `
     <span class="baseline__value">${formatMinutes(evalResult.baselineSeconds)}</span>
-  `;
+  `
 
-  rowsEl.innerHTML = "";
-  const n = options.length;
+  rowsEl.innerHTML = ""
+  const n = options.length
   const minPayback = evalResult.results.reduce(
     (m, r) => Math.min(m, paybackSeconds(r.option)),
     Infinity,
-  );
+  )
   for (const [i, r] of evalResult.results.entries()) {
-    const isBest = evalResult.bestOption?.option === r.option;
+    const isBest = evalResult.bestOption?.option === r.option
     const paysBackBeforeBaseline =
-      minPayback !== Infinity && minPayback < evalResult.baselineSeconds;
-    const isBestPayback =
-      paysBackBeforeBaseline && paybackSeconds(r.option) === minPayback;
-    const row = document.createElement("div");
-    row.className = `row${isBest ? " row--best" : ""}`;
-    row.setAttribute("role", "row");
+      minPayback !== Infinity && minPayback < evalResult.baselineSeconds
+    const isBestPayback = paysBackBeforeBaseline && paybackSeconds(r.option) === minPayback
+    const row = document.createElement("div")
+    row.className = `row${isBest ? " row--best" : ""}`
+    row.setAttribute("role", "row")
     row.innerHTML = `
       <span class="cell-name">
         <input type="text" class="opt-name" data-index="${i}" tabindex="${i + 4}" value="${escapeHtml(r.option.name)}" />
@@ -169,68 +165,66 @@ function render() {
       <span class="cell-num cell-target">
         <span class="target-delta delta ${r.deltaSeconds < 0 ? "delta--good" : r.deltaSeconds > 0 ? "delta--bad" : ""}" data-label="Vs. waiting: ">${formatDeltaPlain(r.deltaSeconds)}</span>
       </span>
-    `;
-    rowsEl.appendChild(row);
+    `
+    rowsEl.appendChild(row)
   }
 
-  updateVerdict(evalResult);
-  updateSequences();
-  attachRowListeners();
+  updateVerdict(evalResult)
+  updateSequences()
+  attachRowListeners()
 }
 
 /** Patch derived cells and ranking in place so editing an input never rebuilds
  *  the row DOM (which would steal focus). Input values are left untouched. */
 function updateEval() {
-  const evalResult = evaluate(state, options);
-  const resultByIndex = new Map(evalResult.results.map((r, i) => [i, r]));
+  const evalResult = evaluate(state, options)
+  const resultByIndex = new Map(evalResult.results.map((r, i) => [i, r]))
   const minPayback = evalResult.results.reduce(
     (m, r) => Math.min(m, paybackSeconds(r.option)),
     Infinity,
-  );
+  )
 
   rowsEl.querySelectorAll<HTMLDivElement>(".row").forEach((rowEl) => {
-    if (rowEl.classList.contains("row--head")) return;
-    const indexEl = rowEl.querySelector<HTMLElement>("[data-index]");
-    if (!indexEl) return;
-    const index = Number(indexEl.dataset.index);
-    const r = resultByIndex.get(index);
-    if (!r) return;
-    rowEl.classList.toggle(
-      "row--best",
-      evalResult.bestOption?.option === r.option,
-    );
-    const cells = rowEl.querySelectorAll<HTMLElement>(".cell-num");
-    cells[0].textContent = formatMinutesOnly(paybackSeconds(r.option));
+    if (rowEl.classList.contains("row--head")) return
+    const indexEl = rowEl.querySelector<HTMLElement>("[data-index]")
+    if (!indexEl) return
+    const index = Number(indexEl.dataset.index)
+    const r = resultByIndex.get(index)
+    if (!r) return
+    rowEl.classList.toggle("row--best", evalResult.bestOption?.option === r.option)
+    const cells = rowEl.querySelectorAll<HTMLElement>(".cell-num")
+    cells[0].textContent = formatMinutesOnly(paybackSeconds(r.option))
     const paysBackBeforeBaseline =
-      minPayback !== Infinity && minPayback < evalResult.baselineSeconds;
+      minPayback !== Infinity && minPayback < evalResult.baselineSeconds
     cells[0].classList.toggle(
       "payback--best",
       paysBackBeforeBaseline && paybackSeconds(r.option) === minPayback,
-    );
-    cells[1].textContent = formatMinutesOnly(r.waitSeconds);
-    const delta = mustFind<HTMLElement>(".target-delta", cells[2]);
-    delta.textContent = formatDeltaPlain(r.deltaSeconds);
-    delta.classList.toggle("delta--good", r.deltaSeconds < 0);
-    delta.classList.toggle("delta--bad", r.deltaSeconds > 0);
-  });
+    )
+    cells[1].textContent = formatMinutesOnly(r.waitSeconds)
+    const delta = mustFind<HTMLElement>(".target-delta", cells[2])
+    delta.textContent = formatDeltaPlain(r.deltaSeconds)
+    delta.classList.toggle("delta--good", r.deltaSeconds < 0)
+    delta.classList.toggle("delta--bad", r.deltaSeconds > 0)
+  })
 
-  mustFind<HTMLElement>(".baseline__value", baselineEl).textContent =
-    formatMinutes(evalResult.baselineSeconds);
-  updateVerdict(evalResult);
-  updateSequences();
+  mustFind<HTMLElement>(".baseline__value", baselineEl).textContent = formatMinutes(
+    evalResult.baselineSeconds,
+  )
+  updateVerdict(evalResult)
+  updateSequences()
 }
 
 function updateVerdict(evalResult: Evaluation) {
-  const show = options.length > 0 && !evalResult.bestOption;
-  verdictEl.hidden = !show;
+  const show = options.length > 0 && !evalResult.bestOption
+  verdictEl.hidden = !show
   verdictEl.innerHTML = show
     ? `<p><strong>Wait.</strong> None of the current options beat reaching the target on your own.</p>`
-    : "";
+    : ""
 }
 
 function updateSequences() {
-  const sequences = bestSequences(state, options).slice(0, 3);
-  sequencesEl.hidden = sequences.length === 0;
+  const sequences = bestSequences(state, options).slice(0, 3)
+  sequencesEl.hidden = sequences.length === 0
   seqListEl.innerHTML = sequences
     .map(
       (s, i) => `
@@ -245,68 +239,68 @@ function updateSequences() {
         <span class="seq-time">${formatMinutes(s.totalSeconds)}</span>
       </li>`,
     )
-    .join("");
+    .join("")
 }
 
 function attachRowListeners() {
   rowsEl.querySelectorAll<HTMLInputElement>(".opt-name").forEach((el) => {
-    el.addEventListener("focus", () => el.select());
+    el.addEventListener("focus", () => el.select())
     el.addEventListener("input", () => {
-      const opt = options[Number(el.dataset.index)];
-      if (opt) opt.name = el.value;
-    });
+      const opt = options[Number(el.dataset.index)]
+      if (opt) opt.name = el.value
+    })
     el.addEventListener("change", () => {
       if (options[Number(el.dataset.index)].name === "") {
-        options.splice(Number(el.dataset.index), 1);
-        render();
+        options.splice(Number(el.dataset.index), 1)
+        render()
       }
-    });
-  });
+    })
+  })
 
   rowsEl.querySelectorAll<HTMLInputElement>(".opt-gain").forEach((el) => {
     bindNumeric(el, () => {
-      const opt = options[Number(el.dataset.index)];
-      if (opt) opt.gain = parseNumber(el.value);
-      updateEval();
-    });
+      const opt = options[Number(el.dataset.index)]
+      if (opt) opt.gain = parseNumber(el.value)
+      updateEval()
+    })
     el.addEventListener("change", () => {
-      sortOptions();
-      render();
-    });
-  });
+      sortOptions()
+      render()
+    })
+  })
 
   rowsEl.querySelectorAll<HTMLInputElement>(".opt-cost").forEach((el) => {
     bindNumeric(el, () => {
-      const opt = options[Number(el.dataset.index)];
-      if (opt) opt.cost = parseNumber(el.value);
-      updateEval();
-    });
-  });
+      const opt = options[Number(el.dataset.index)]
+      if (opt) opt.cost = parseNumber(el.value)
+      updateEval()
+    })
+  })
 }
 
 function escapeHtml(s: string): string {
-  const div = document.createElement("div");
-  div.textContent = s;
-  return div.innerHTML;
+  const div = document.createElement("div")
+  div.textContent = s
+  return div.innerHTML
 }
 
-[inTarget, inAmount, inGain].forEach((el) => {
+;[inTarget, inAmount, inGain].forEach((el) => {
   bindNumeric(el, () => {
-    readCore();
-    render();
-  });
-});
+    readCore()
+    render()
+  })
+})
 
 addBtn.addEventListener("click", () => {
   options.push({
     name: "X",
     gain: 1,
     cost: 100,
-  });
-  sortOptions();
-  render();
-});
+  })
+  sortOptions()
+  render()
+})
 
-readCore();
-sortOptions();
-render();
+readCore()
+sortOptions()
+render()
