@@ -10,9 +10,11 @@ export function renderControls(
   ruleset: Ruleset,
   modeA: SideMode,
   modeB: SideMode,
+  animate: boolean,
   onRuleset: (r: Ruleset) => void,
   onModeA: (m: SideMode) => void,
   onModeB: (m: SideMode) => void,
+  onToggleAnimate: (a: boolean) => void,
   onStart: () => void,
   onInfo: () => void,
   onSim: () => void,
@@ -45,6 +47,17 @@ export function renderControls(
   infoBtn.setAttribute("aria-label", "How to play")
   infoBtn.addEventListener("click", onInfo)
 
+  const animateLab = document.createElement("label")
+  animateLab.className = "field field-animate"
+  const animateSpan = document.createElement("span")
+  animateSpan.textContent = "Animate"
+  const animateBox = document.createElement("input")
+  animateBox.type = "checkbox"
+  animateBox.className = "animate-toggle"
+  animateBox.checked = animate
+  animateBox.addEventListener("change", () => onToggleAnimate(animateBox.checked))
+  animateLab.append(animateSpan, animateBox)
+
   const simBtn = document.createElement("button")
   simBtn.textContent = "?"
   simBtn.id = "sim-btn"
@@ -59,6 +72,7 @@ export function renderControls(
     infoBtn,
     field("Player A", modeASel),
     field("Player B", modeBSel),
+    animateLab,
     simBtn,
     startBtn,
   )

@@ -1,4 +1,6 @@
 import "./style.css"
+import type { AnimateHandle } from "./animate"
+import { animateBoardNumbers } from "./animate"
 import { chooseMove } from "./computer"
 import type { GameState, Player, Ruleset } from "./models"
 import { finishIfNoMoves, play, startState, tally } from "./models"
@@ -19,6 +21,9 @@ let state: GameState = startState("anan_anan")
 let ruleset: Ruleset = "anan_anan"
 let modeA: SideMode = "human"
 let modeB: SideMode = "random"
+let animateMoves = true
+let animating = false
+let animHandle: AnimateHandle | null = null
 let computerTimer = 0
 let editing = false
 let showingRules = false
@@ -45,6 +50,7 @@ function init(): void {
       ruleset,
       modeA,
       modeB,
+      animateMoves,
       (r) => {
         ruleset = r
         resetGame()
@@ -57,6 +63,7 @@ function init(): void {
         modeB = m
         resetGame()
       },
+      onToggleAnimate,
       () => resetGame(),
       openRules,
       openSim,
@@ -76,6 +83,7 @@ function onKeyDown(e: KeyboardEvent): void {
 
 function resetGame(): void {
   window.clearTimeout(computerTimer)
+  cancelAnim()
   state = startState(ruleset)
   editing = false
   render()
@@ -112,6 +120,7 @@ function submitEdit(edit: EditRead, turn: Player): void {
 
 function openEdit(): void {
   window.clearTimeout(computerTimer)
+  cancelAnim()
   editing = true
   render()
   const first = boardEl.querySelector<HTMLInputElement>("input[data-pit]")
@@ -121,6 +130,7 @@ function openEdit(): void {
 
 function openRules(): void {
   window.clearTimeout(computerTimer)
+  cancelAnim()
   showingSim = false
   showingRules = true
   render()
@@ -137,6 +147,7 @@ function closeRules(): void {
 
 function openSim(): void {
   window.clearTimeout(computerTimer)
+  cancelAnim()
   showingRules = false
   showingSim = true
   render()
@@ -173,6 +184,28 @@ function applyEdit(pits: number[], captured: [number, number], turn: Player): vo
   scheduleComputer()
 }
 
+function setAnimating(on: boolean): void {
+  animating = on
+  boardEl.classList.toggle("animating", on)
+}
+
+function cancelAnim(): void {
+  if (animHandle !== null) {
+    animHandle.cancel()
+    animHandle = null
+  }
+  if (animating) setAnimating(false)
+}
+
+function onToggleAnimate(a: boolean): void {
+  animateMoves = a
+  if (!a && animating) {
+    cancelAnim()
+    render()
+    scheduleComputer()
+  }
+}
+
 function currentMode(): SideMode {
   return state.turn === "A" ? modeA : modeB
 }
@@ -182,12 +215,23 @@ function isHumanTurn(): boolean {
 }
 
 function onPitClick(pit: number): void {
-  if (editing || !isHumanTurn()) return
+  if (editing || animating || !isHumanTurn()) return
   move(pit)
+}
+
+function boardChanged(prev: GameState): boolean {
+  if (prev.captured[0] !== state.captured[0] || prev.captured[1] !== state.captured[1]) {
+    return true
+  }
+  for (let i = 0; i < 12; i++) {
+    if (prev.board.pits[i] !== state.board.pits[i]) return true
+  }
+  return false
 }
 
 function move(pit: number): void {
   const previousTotal = state.captured[0] + state.captured[1]
+  const prev = state
   try {
     state = play(state, { pit })
   } catch {
@@ -195,8 +239,28 @@ function move(pit: number): void {
   }
   state = tally(state, previousTotal)
   state = finishIfNoMoves(state)
-  render()
-  scheduleComputer()
+  if (!animateMoves || !boardChanged(prev)) {
+    render()
+    scheduleComputer()
+    return
+  }
+  setAnimating(true)
+  const handle = animateBoardNumbers(
+    boardEl,
+    pit,
+    prev.board.pits,
+    state.board.pits,
+    prev.captured,
+    state.captured,
+  )
+  animHandle = handle
+  void handle.done.then(() => {
+    if (animHandle !== handle) return
+    animHandle = null
+    setAnimating(false)
+    render()
+    scheduleComputer()
+  })
 }
 
 function scheduleComputer(): void {
