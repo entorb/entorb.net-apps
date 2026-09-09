@@ -10,6 +10,7 @@ import {
   paybackSeconds,
 } from "./calc"
 import { options, state } from "./const"
+import { load, save } from "./storage"
 
 function mustFind<T extends HTMLElement>(sel: string, root: ParentNode = document): T {
   const el = root.querySelector<T>(sel)
@@ -82,6 +83,7 @@ const sequencesEl = mustFind<HTMLDivElement>("#sequences")
 const seqListEl = mustFind<HTMLOListElement>("#seq-list")
 const addBtn = mustFind<HTMLButtonElement>("#add-option")
 
+load()
 inTarget.value = formatNumber(state.target)
 inAmount.value = formatNumber(state.amount)
 inGain.value = formatNumber(state.gain)
@@ -172,6 +174,7 @@ function render() {
   updateVerdict(evalResult)
   updateSequences()
   attachRowListeners()
+  save()
 }
 
 /** Patch derived cells and ranking in place so editing an input never rebuilds
@@ -212,6 +215,7 @@ function updateEval() {
   )
   updateVerdict(evalResult)
   updateSequences()
+  save()
 }
 
 function updateVerdict(evalResult: Evaluation) {
@@ -247,7 +251,10 @@ function attachRowListeners() {
     el.addEventListener("focus", () => el.select())
     el.addEventListener("input", () => {
       const opt = options[Number(el.dataset.index)]
-      if (opt) opt.name = el.value
+      if (opt) {
+        opt.name = el.value
+        save()
+      }
     })
     el.addEventListener("change", () => {
       if (options[Number(el.dataset.index)].name === "") {
