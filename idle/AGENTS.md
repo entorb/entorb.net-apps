@@ -1,6 +1,6 @@
 # Idle Games — Time-to-target ledger
 
-No-framework investment planner: vanilla TypeScript + Vite, no backend, no runtime deps. Entry `index.html` → `src/main.ts`.
+No-backend, no-framework web app. PNPM, TypeScript + Vite. Static output for browser.
 
 ## Layout
 
