@@ -1,6 +1,6 @@
-# Web Implementation
+# Oware Web Implementation
 
-No-backend web app. TypeScript + Vite, plays in the browser. Static output.
+No-backend, no-framework web app. PNPM, TypeScript + Vite. Static output for browser.
 
 ## Layout
 

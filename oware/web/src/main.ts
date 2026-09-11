@@ -27,6 +27,7 @@ let animating = false
 let animHandle: AnimateHandle | null = null
 let computerTimer = 0
 let editing = false
+let counted = false
 let showingRules = false
 let showingSim = false
 
@@ -67,7 +68,7 @@ function init(): void {
         resetGame()
       },
       onToggleAnimate,
-      startGame,
+      resetGame,
       openRules,
       openSim,
     ),
@@ -76,11 +77,6 @@ function init(): void {
   render()
   refreshGameCount()
   scheduleComputer()
-}
-
-function startGame(): void {
-  resetGame()
-  void recordStartedGame().then(() => refreshGameCount())
 }
 
 function refreshGameCount(): void {
@@ -101,6 +97,7 @@ function resetGame(): void {
   cancelAnim()
   state = startState(ruleset)
   editing = false
+  counted = false
   render()
   scheduleComputer()
 }
@@ -251,6 +248,10 @@ function move(pit: number): void {
     state = play(state, { pit })
   } catch {
     return
+  }
+  if (!counted) {
+    counted = true
+    void recordStartedGame().then(() => refreshGameCount())
   }
   state = tally(state, previousTotal)
   state = finishIfNoMoves(state)
