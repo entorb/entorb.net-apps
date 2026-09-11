@@ -21,6 +21,7 @@ prek
 recalc
 riscv
 rowbox
+sigfig
 sugarss
 sunos
 tinyglobby

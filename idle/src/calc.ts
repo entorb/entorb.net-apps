@@ -181,12 +181,30 @@ export function bestSequences(
   return results.sort((a, b) => a.totalSeconds - b.totalSeconds)
 }
 
-export function formatMinutes(seconds: number): string {
+/** Round to 3 significant figures, stripping trailing zeros. */
+function sigfig3(n: number): string {
+  const s = n.toPrecision(3)
+  return Number(s).toString()
+}
+
+/** Long form for the header's time to target: seconds below an hour, then
+ *  minutes/hours/days so large remaining times stay readable. */
+export function formatDurationLong(seconds: number): string {
   if (seconds === Infinity) return "never (no gain)"
   if (seconds === 0) return "already reached"
-  const minutes = seconds / 60
-  if (minutes < 1) return `${seconds.toFixed(1)} s`
-  return `${minutes.toFixed(1)} min`
+  if (seconds < 3600) {
+    const s = Math.floor(seconds % 60)
+    const m = Math.floor(seconds / 60)
+    if (m === 0) return `${sigfig3(seconds)}s`
+    return `${m}:${String(s).padStart(2, "0")}min`
+  }
+  const h = Math.floor(seconds / 3600)
+  if (h < 24) {
+    const m = Math.floor((seconds % 3600) / 60)
+    return `${h}h ${m}min`
+  }
+  const d = Math.floor(h / 24)
+  return `${d}d ${h % 24}h`
 }
 
 /** Insert a space between groups of thousands: 12345.6 -> "12 345.6". */
@@ -205,7 +223,7 @@ export function formatNumber(n: number): string {
 /** Compact minutes-only form for the options table; never shows hours/days. */
 export function formatMinutesOnly(seconds: number): string {
   if (seconds === Infinity) return "never (no gain)"
-  if (seconds === 0) return "0"
+  if (seconds === 0) return "0.0"
   const minutes = seconds / 60
   return groupThousands(minutes.toFixed(1))
 }
@@ -216,5 +234,5 @@ export function formatDeltaPlain(seconds: number): string {
   const sign = seconds < 0 ? "-" : "+"
   const abs = Math.abs(seconds)
   if (abs === Infinity) return `${sign}∞`
-  return `${sign}${groupThousands((abs / 60).toFixed(1))}`
+  return `${sign}${groupThousands(sigfig3(abs / 60))}`
 }

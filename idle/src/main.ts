@@ -4,7 +4,7 @@ import {
   type Evaluation,
   evaluate,
   formatDeltaPlain,
-  formatMinutes,
+  formatDurationLong,
   formatMinutesOnly,
   formatNumber,
   paybackSeconds,
@@ -31,22 +31,21 @@ app.innerHTML = `
       </div>
     </header>
 
-    <section class="rowbox">
-      <section class="corebox" aria-label="Current standing">
-        <label class="field">
-          <span>Target amount</span>
-          <input type="text" id="in-target" inputmode="decimal" autocomplete="off" spellcheck="false" tabindex="1" />
-        </label>
-        <label class="field">
-          <span>Current amount</span>
-          <input type="text" id="in-amount" inputmode="decimal" autocomplete="off" spellcheck="false" tabindex="2" />
-        </label>
-        <label class="field">
-          <span>Current gain / s</span>
-          <input type="text" id="in-gain" inputmode="decimal" autocomplete="off" spellcheck="false" tabindex="3" />
-        </label>
-      </section>
-      <section class="baseline" id="baseline" aria-live="polite"></section>
+    <section class="corebox" aria-label="Current standing">
+      <label class="field">
+        <span>Target amount</span>
+        <input type="text" id="in-target" inputmode="decimal" autocomplete="off" spellcheck="false" tabindex="1" />
+        <span class="baseline" id="baseline" aria-live="polite"></span>
+      </label>
+      <label class="field">
+        <span>Current amount</span>
+        <input type="text" id="in-amount" inputmode="decimal" autocomplete="off" spellcheck="false" tabindex="2" />
+      </label>
+      <label class="field">
+        <span>Current gain / s</span>
+        <input type="text" id="in-gain" inputmode="decimal" autocomplete="off" spellcheck="false" tabindex="3" />
+        <span class="gain-rates" id="gain-rates"></span>
+      </label>
     </section>
 
     <section class="options" aria-label="Investment options">
@@ -86,6 +85,7 @@ const baselineEl = mustFind<HTMLDivElement>("#baseline")
 const verdictEl = mustFind<HTMLDivElement>("#verdict")
 const sequencesEl = mustFind<HTMLDivElement>("#sequences")
 const seqListEl = mustFind<HTMLOListElement>("#seq-list")
+const gainRatesEl = mustFind<HTMLSpanElement>("#gain-rates")
 const addBtn = mustFind<HTMLButtonElement>("#add-option")
 const scaleUpBtn = mustFind<HTMLButtonElement>("#scale-up")
 const scaleDownBtn = mustFind<HTMLButtonElement>("#scale-down")
@@ -146,8 +146,11 @@ function bindNumeric(el: HTMLInputElement, onCommit: () => void): void {
 function render() {
   const evalResult = evaluate(state, options)
 
-  baselineEl.innerHTML = `
-    <span class="baseline__value">${formatMinutes(evalResult.baselineSeconds)}</span>
+  baselineEl.innerHTML = formatDurationLong(evalResult.baselineSeconds)
+
+  gainRatesEl.innerHTML = `
+    <span class="gain-rate">${formatNumber(state.gain * 60)} / min</span>
+    <span class="gain-rate">${formatNumber(state.gain * 3600)} / h</span>
   `
 
   rowsEl.innerHTML = ""
@@ -218,9 +221,11 @@ function updateEval() {
     delta.classList.toggle("delta--bad", r.deltaSeconds > 0)
   })
 
-  mustFind<HTMLElement>(".baseline__value", baselineEl).textContent = formatMinutes(
-    evalResult.baselineSeconds,
-  )
+  baselineEl.textContent = formatDurationLong(evalResult.baselineSeconds)
+  gainRatesEl.innerHTML = `
+    <span class="gain-rate">${formatNumber(state.gain * 60)} / min</span>
+    <span class="gain-rate">${formatNumber(state.gain * 3600)} / h</span>
+  `
   updateVerdict(evalResult)
   updateSequences()
   save()
@@ -248,7 +253,7 @@ function updateSequences() {
               `${escapeHtml(step.option.name)}<span class="seq-step-wait">${step.waitSeconds > 0 ? ` (+${formatMinutesOnly(step.waitSeconds)})` : " (now)"}</span>`,
           )
           .join('<span class="seq-arrow">→</span>')}</span>
-        <span class="seq-time">${formatMinutes(s.totalSeconds)}</span>
+        <span class="seq-time">${formatDurationLong(s.totalSeconds)}</span>
       </li>`,
     )
     .join("")

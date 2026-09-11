@@ -56,20 +56,12 @@ body {
   font-size: 1rem;
 }
 
-.rowbox {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 24px;
-  padding: 20px 0 24px;
-  border-bottom: 1px solid var(--rule);
-}
-
 .corebox {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 20px;
-  flex: 1;
+  padding: 20px 0 24px;
+  border-bottom: 1px solid var(--rule);
 }
 
 .field {
@@ -94,6 +86,10 @@ input {
   width: 100%;
 }
 
+input[inputmode="decimal"] {
+  text-align: center;
+}
+
 input:focus-visible,
 button:focus-visible {
   outline: 2px solid var(--green);
@@ -101,23 +97,30 @@ button:focus-visible {
 }
 
 .baseline {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 2px;
-  padding-left: 24px;
-  border-left: 1px solid var(--rule);
-}
-
-.baseline__label {
-  color: var(--ink-soft);
-  font-size: 0.95rem;
-}
-
-.baseline__value {
   font-family: "IBM Plex Mono", monospace;
-  font-size: 1.3rem;
+  font-size: 1.25rem;
   font-weight: 600;
+  color: var(--green);
+  text-align: center;
+}
+
+.gain-rates {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.gain-rate {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 1.25rem;
+  color: var(--ink-soft);
+}
+
+.gain-rate + .gain-rate::before {
+  content: "|";
+  color: var(--rule);
+  margin-right: 10px;
 }
 
 .options {
@@ -197,7 +200,7 @@ button:focus-visible {
 .cell-num {
   font-family: "IBM Plex Mono", monospace;
   font-size: 0.88rem;
-  text-align: right;
+  text-align: center;
 }
 
 .payback--best {
@@ -306,17 +309,8 @@ button:focus-visible {
   font-size: 0.9rem;
 }
 @media (max-width: 720px) {
-  .rowbox {
-    flex-direction: column;
-    align-items: stretch;
-  }
   .corebox {
     grid-template-columns: 1fr;
-  }
-  .baseline {
-    align-items: flex-start;
-    padding-left: 0;
-    border-left: none;
   }
   .row {
     grid-template-columns: 1fr;
@@ -327,7 +321,7 @@ button:focus-visible {
     display: none;
   }
   .cell-num {
-    text-align: left;
+    text-align: center;
   }
   .cell-num::before {
     content: attr(data-label);
