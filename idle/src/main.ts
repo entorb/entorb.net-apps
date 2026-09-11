@@ -31,7 +31,7 @@ app.innerHTML = `
       </div>
     </header>
 
-    <section class="corebox" aria-label="Current standing">
+    <section class="card corebox" aria-label="Current standing">
       <label class="field">
         <span>Target amount</span>
         <input type="text" id="in-target" inputmode="decimal" autocomplete="off" spellcheck="false" tabindex="1" />
@@ -48,7 +48,7 @@ app.innerHTML = `
       </label>
     </section>
 
-    <section class="options" aria-label="Investment options">
+    <section class="card options" aria-label="Investment options">
       <div class="options__head">
         <h2>Investment options</h2>
         <button type="button" id="add-option">+ add option</button>
@@ -68,9 +68,9 @@ app.innerHTML = `
       </div>
     </section>
 
-<section class="verdict" id="verdict" aria-live="polite"></section>
+<section class="card verdict" id="verdict" aria-live="polite"></section>
 
-    <section class="sequences" id="sequences" aria-live="polite" hidden>
+    <section class="card sequences" id="sequences" aria-live="polite" hidden>
       <h2>Best purchase sequences</h2>
       <ol class="seq-list" id="seq-list"></ol>
     </section>
@@ -171,12 +171,12 @@ function render() {
       <span class="cell-name">
         <input type="text" class="opt-name" data-index="${i}" tabindex="${i + 4}" value="${escapeHtml(r.option.name)}" />
       </span>
-      <span><input type="text" class="opt-gain" inputmode="decimal" autocomplete="off" spellcheck="false" data-index="${i}" tabindex="${n + i + 4}" value="${formatNumber(r.option.gain)}" /></span>
-      <span><input type="text" class="opt-cost" inputmode="decimal" autocomplete="off" spellcheck="false" data-index="${i}" tabindex="${2 * n + i + 4}" value="${formatNumber(r.option.cost)}" /></span>
-      <span class="cell-num${isBestPayback ? " payback--best" : ""}" data-label="Payback: ">${formatMinutesOnly(paybackSeconds(r.option))}</span>
-      <span class="cell-num" data-label="Wait to afford: ">${formatMinutesOnly(r.waitSeconds)}</span>
+      <span class="cell-gain"><input type="text" class="opt-gain" inputmode="decimal" autocomplete="off" spellcheck="false" data-index="${i}" tabindex="${n + i + 4}" value="${formatNumber(r.option.gain)}" /><span class="unit-suffix">/s</span></span>
+      <span class="cell-cost"><input type="text" class="opt-cost" inputmode="decimal" autocomplete="off" spellcheck="false" data-index="${i}" tabindex="${2 * n + i + 4}" value="${formatNumber(r.option.cost)}" /><span class="unit-suffix">$</span></span>
+      <span class="cell-num cell-payback${isBestPayback ? " payback--best" : ""}">${formatMinutesOnly(paybackSeconds(r.option))}</span>
+      <span class="cell-num cell-wait">${formatMinutesOnly(r.waitSeconds)}</span>
       <span class="cell-num cell-target">
-        <span class="target-delta delta ${r.deltaSeconds < 0 ? "delta--good" : r.deltaSeconds > 0 ? "delta--bad" : ""}" data-label="Vs. waiting: ">${formatDeltaPlain(r.deltaSeconds)}</span>
+        <span class="target-delta delta ${r.deltaSeconds < 0 ? "delta--good" : r.deltaSeconds > 0 ? "delta--bad" : ""}">${formatDeltaPlain(r.deltaSeconds)}</span>
       </span>
     `
     rowsEl.appendChild(row)
@@ -205,7 +205,8 @@ function updateEval() {
     const index = Number(indexEl.dataset.index)
     const r = resultByIndex.get(index)
     if (!r) return
-    rowEl.classList.toggle("row--best", evalResult.bestOption?.option === r.option)
+    const isBest = evalResult.bestOption?.option === r.option
+    rowEl.classList.toggle("row--best", isBest)
     const cells = rowEl.querySelectorAll<HTMLElement>(".cell-num")
     cells[0].textContent = formatMinutesOnly(paybackSeconds(r.option))
     const paysBackBeforeBaseline =
