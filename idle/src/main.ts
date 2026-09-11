@@ -25,6 +25,10 @@ app.innerHTML = `
   <main class="ledger">
     <header class="ledger__head">
       <h1>Idle Time-to-target</h1>
+      <div class="toolbar">
+        <button type="button" id="scale-up" class="btn-scale">×1000</button>
+        <button type="button" id="scale-down" class="btn-scale">÷1000</button>
+      </div>
     </header>
 
     <section class="rowbox">
@@ -83,6 +87,8 @@ const verdictEl = mustFind<HTMLDivElement>("#verdict")
 const sequencesEl = mustFind<HTMLDivElement>("#sequences")
 const seqListEl = mustFind<HTMLOListElement>("#seq-list")
 const addBtn = mustFind<HTMLButtonElement>("#add-option")
+const scaleUpBtn = mustFind<HTMLButtonElement>("#scale-up")
+const scaleDownBtn = mustFind<HTMLButtonElement>("#scale-down")
 const gamesCountEl = mustFind<HTMLSpanElement>("#games-count")
 
 load()
@@ -224,7 +230,7 @@ function updateVerdict(evalResult: Evaluation) {
   const show = options.length > 0 && !evalResult.bestOption
   verdictEl.hidden = !show
   verdictEl.innerHTML = show
-    ? `<p><strong>Wait.</strong> None of the current options beat reaching the target on your own.</p>`
+    ? `<p><strong>Wait.</strong> None of the options beat waiting.</p>`
     : ""
 }
 
@@ -320,6 +326,25 @@ function refreshGameCount(): void {
     if (count !== null) gamesCountEl.textContent = String(count)
   })
 }
+
+/** Multiply every number (core inputs and option gain/cost) by `factor`. */
+function scaleAll(factor: number): void {
+  const round = (n: number): number => Number(n.toPrecision(12))
+  state.target = round(state.target * factor)
+  state.amount = round(state.amount * factor)
+  state.gain = round(state.gain * factor)
+  for (const opt of options) {
+    opt.gain = round(opt.gain * factor)
+    opt.cost = round(opt.cost * factor)
+  }
+  inTarget.value = formatNumber(state.target)
+  inAmount.value = formatNumber(state.amount)
+  inGain.value = formatNumber(state.gain)
+  render()
+}
+
+scaleUpBtn.addEventListener("click", () => scaleAll(1000))
+scaleDownBtn.addEventListener("click", () => scaleAll(1 / 1000))
 
 readCore()
 sortOptions()
