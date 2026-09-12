@@ -8,20 +8,22 @@ No-backend, no-framework web app. PNPM, TypeScript + Vite. Static output for bro
 - `src/const.ts` — default `state` (target / amount / gain) and hardcoded option list. Only source of defaults; no persistence.
 - `src/main.ts` — DOM UI. Markup built from template strings; run `escapeHtml` on all user text.
 
-## UI focus rule
-
-`render()` rebuilds every row; `updateEval()` patches only the derived cells in place so editing a number input never steals focus. Keep new inputs off any path that re-renders on `input`.
-
 ## Commands
 
-Package manager is pnpm; no test or lint script exists in `idle/`. Git repo root and all checks live in the parent dir (`..`).
+- `scripts/run_checks.sh` (runs every `scripts/chk_*.sh`); run after each feature
+- `scripts/chk_js_format.sh` (biome `check --write`, configured at `../biome.json`); run after each task
+- `scripts/chk_js_types.sh` (`pnpm exec tsc --noEmit`)
+- `scripts/chk_js_dead.sh` (`knip`)
+- `scripts/chk_spelling.sh` (`cspell`, uses `cspell-words.txt`)
+- `scripts/chk_js_package_audit.sh` (`pnpm audit`)
+- `scripts/chk_pre-commit.sh` (prek run `--all-files`)
 
-- type check / build: `npm run build` (= `tsc && vite build`; tsconfig is `noEmit`), dev server: `npm run dev`
-- format + lint: biome configured only at repo root (`biome.json`). `scripts/chk_js_format.sh`
-- spelling: uses root `cspell-words.txt` (the `idle/cspell-words.txt` copy is stale); append unknown words at root, pre-commit sorts it
-
-`idle/` does not fully pass biome today (pre-existing tsconfig formatting errors). Keep new code biome-clean; don't touch unrelated files unless asked.
+When biome or type errors appear: Fix them and update `AGENTS.md` so they are prevented in future.
 
 ## Behavior
 
 Options are kept sorted ascending by `gain` (`sortOptions()`), re-sorted on add and on gain `change` (biome keeps gain/cost row heights aligned but rows reorder; name edits never re-sort).
+
+## UI focus rule
+
+`render()` rebuilds every row; `updateEval()` patches only the derived cells in place so editing a number input never steals focus. Keep new inputs off any path that re-renders on `input`.
