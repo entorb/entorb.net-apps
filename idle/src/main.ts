@@ -25,24 +25,24 @@ app.innerHTML = `
   <main class="ledger">
     <header class="ledger__head">
       <h1>Idle Time-to-target</h1>
-      <div class="toolbar">
-        <button type="button" id="scale-up" class="btn-scale">×1000</button>
-        <button type="button" id="scale-down" class="btn-scale">÷1000</button>
-      </div>
     </header>
 
     <section class="card corebox" aria-label="Current standing">
       <label class="field">
-        <span>Target amount</span>
+        <span>Target $</span>
         <input type="text" id="in-target" inputmode="decimal" autocomplete="off" spellcheck="false" tabindex="1" />
         <span class="baseline" id="baseline" aria-live="polite"></span>
       </label>
       <label class="field">
-        <span>Current amount</span>
+        <span>Current $</span>
         <input type="text" id="in-amount" inputmode="decimal" autocomplete="off" spellcheck="false" tabindex="2" />
+        <span class="toolbar">
+          <button type="button" id="scale-up" class="btn-scale">×1000</button>
+          <button type="button" id="scale-down" class="btn-scale">÷1000</button>
+        </span>
       </label>
       <label class="field">
-        <span>Current gain / s</span>
+        <span>$ / sec</span>
         <input type="text" id="in-gain" inputmode="decimal" autocomplete="off" spellcheck="false" tabindex="3" />
         <span class="gain-rates" id="gain-rates"></span>
       </label>
@@ -50,14 +50,17 @@ app.innerHTML = `
 
     <section class="card options" aria-label="Investment options">
       <div class="options__head">
-        <h2>Investment options</h2>
-        <button type="button" id="add-option">+ add option</button>
+        <div>
+          <h2>Investment options</h2>
+          <span class="options__hint">all times in minutes</span>
+        </div>
+        <button type="button" id="add-option">+</button>
       </div>
       <div class="table" role="table">
         <div class="row row--head" role="row">
 <span role="columnheader">Option</span>
-          <span role="columnheader">Gain / s</span>
-          <span role="columnheader">Cost</span>
+          <span role="columnheader">$ / sec</span>
+          <span role="columnheader">$</span>
           <span role="columnheader">Payback</span>
           <span role="columnheader">Wait to afford</span>
           <span role="columnheader" class="head-ttt">
@@ -149,8 +152,8 @@ function render() {
   baselineEl.innerHTML = formatDurationLong(evalResult.baselineSeconds)
 
   gainRatesEl.innerHTML = `
-    <span class="gain-rate">${formatNumber(state.gain * 60)} / min</span>
-    <span class="gain-rate">${formatNumber(state.gain * 3600)} / h</span>
+    <span class="gain-rate">${formatNumber(state.gain * 60)}/min</span>
+    <span class="gain-rate">${formatNumber(state.gain * 3600)}/h</span>
   `
 
   rowsEl.innerHTML = ""
@@ -177,6 +180,16 @@ function render() {
       <span class="cell-num cell-wait">${formatMinutesOnly(r.waitSeconds)}</span>
       <span class="cell-num cell-target">
         <span class="target-delta delta ${r.deltaSeconds < 0 ? "delta--good" : r.deltaSeconds > 0 ? "delta--bad" : ""}">${formatDeltaPlain(r.deltaSeconds)}</span>
+      </span>
+      <span class="cell-info">
+        <span class="opt-labels">
+          <span class="opt-label">Payback</span>
+          <span class="opt-label">Wait to afford</span>
+          <span class="opt-label">Time to target</span>
+        </span>
+      </span>
+      <span class="cell-del">
+        <button type="button" class="opt-del" data-index="${i}" tabindex="${3 * n + i + 4}" aria-label="Delete ${escapeHtml(r.option.name)}">×</button>
       </span>
     `
     rowsEl.appendChild(row)
@@ -224,8 +237,8 @@ function updateEval() {
 
   baselineEl.textContent = formatDurationLong(evalResult.baselineSeconds)
   gainRatesEl.innerHTML = `
-    <span class="gain-rate">${formatNumber(state.gain * 60)} / min</span>
-    <span class="gain-rate">${formatNumber(state.gain * 3600)} / h</span>
+    <span class="gain-rate">${formatNumber(state.gain * 60)}/min</span>
+    <span class="gain-rate">${formatNumber(state.gain * 3600)}/h</span>
   `
   updateVerdict(evalResult)
   updateSequences()
@@ -295,6 +308,13 @@ function attachRowListeners() {
       const opt = options[Number(el.dataset.index)]
       if (opt) opt.cost = parseNumber(el.value)
       updateEval()
+    })
+  })
+
+  rowsEl.querySelectorAll<HTMLButtonElement>(".opt-del").forEach((el) => {
+    el.addEventListener("click", () => {
+      options.splice(Number(el.dataset.index), 1)
+      render()
     })
   })
 }
