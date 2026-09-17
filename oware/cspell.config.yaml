@@ -10,7 +10,7 @@ dictionaryDefinitions:
 dictionaries:
   - cspell-words
   - python
-  - javescript
+  - javascript
   - typescript
 language: en-US
 ignorePaths:

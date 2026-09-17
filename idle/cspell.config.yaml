@@ -9,7 +9,7 @@ dictionaryDefinitions:
     addWords: true
 dictionaries:
   - cspell-words
-  - javescript
+  - javascript
   - typescript
 language: en-US
 ignorePaths:
