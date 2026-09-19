@@ -10,7 +10,10 @@
 
 exclude: >-
   (?x)^(
-    \.vscode/.*|.*/tsconfig.json
+    \.vscode/.*
+    |.*/tsconfig.json
+    |.*/pnpm-lock.yaml
+    |
   )$
 repos:
   - repo: builtin
