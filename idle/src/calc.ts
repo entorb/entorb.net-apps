@@ -182,7 +182,7 @@ export function bestSequences(
 }
 
 /** Round to 3 significant figures, stripping trailing zeros. */
-function sigfig3(n: number): string {
+export function sigfig3(n: number): string {
   const s = n.toPrecision(3)
   return Number(s).toString()
 }
