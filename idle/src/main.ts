@@ -8,6 +8,7 @@ import {
   formatMinutesOnly,
   formatNumber,
   paybackSeconds,
+  sigfig3,
 } from "./calc"
 import { options, state } from "./const"
 import { fetchGameCount, recordStartedGame } from "./stats"
@@ -152,8 +153,8 @@ function render() {
   baselineEl.innerHTML = formatDurationLong(evalResult.baselineSeconds)
 
   gainRatesEl.innerHTML = `
-    <span class="gain-rate">${formatNumber(state.gain * 60)}/min</span>
-    <span class="gain-rate">${formatNumber(state.gain * 3600)}/h</span>
+    <span class="gain-rate">${sigfig3(state.gain * 60)}/min</span>
+    <span class="gain-rate">${sigfig3(state.gain * 3600)}/h</span>
   `
 
   rowsEl.innerHTML = ""
@@ -237,8 +238,8 @@ function updateEval() {
 
   baselineEl.textContent = formatDurationLong(evalResult.baselineSeconds)
   gainRatesEl.innerHTML = `
-    <span class="gain-rate">${formatNumber(state.gain * 60)}/min</span>
-    <span class="gain-rate">${formatNumber(state.gain * 3600)}/h</span>
+    <span class="gain-rate">${sigfig3(state.gain * 60)}/min</span>
+    <span class="gain-rate">${sigfig3(state.gain * 3600)}/h</span>
   `
   updateVerdict(evalResult)
   updateSequences()
