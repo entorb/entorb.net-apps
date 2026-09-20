@@ -13,7 +13,7 @@ exclude: >-
     \.vscode/.*
     |.*/tsconfig.json
     |.*/pnpm-lock.yaml
-    |
+    |oware/web/pnpm-lock.yaml
   )$
 repos:
   - repo: builtin
