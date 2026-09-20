@@ -1,6 +1,8 @@
 #!/bin/sh
+# type check for the node project in $1 (path relative to the repo root)
 
-cd "$(dirname "$0")/../web"
+cd "$(dirname "$0")/../.." || exit 1
+cd "${1:?usage: $0 <dir>}" || exit 1
 out=$(mktemp)
 trap 'rm -f "$out"' EXIT INT TERM
 
