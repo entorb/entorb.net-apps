@@ -1,8 +1,11 @@
 biomejs
 browserslist
 entorb
+knip
 korrekturleser
 multitimer
 nvmrc
 oware
+PKGS
 prek
+vitest

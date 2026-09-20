@@ -14,17 +14,15 @@ No-backend, no-framework web app. PNPM, TypeScript + Vite. Static output for bro
 - `main.ts` runs the game loop — a click on a movable pit calls `play()`, then a timer triggers the computer side via `chooseMove()` unless it's a human turn. Supports human vs human, human vs computer, and computer vs computer.
 - `rules.ts` parses the rule text from `../rules-this-game.md` shown in the UI per `Ruleset`; it has no game logic.
 
-## Checks
+## Code Checks
 
-Run from the repo root — the web subset of the shared scripts:
+after each task run
 
-- `scripts/chk_js_types.sh` — `tsc --noEmit`
-- `scripts/chk_js_test.sh` — vitest (`pnpm exec vitest --watch=false --silent=passed-only`)
-- `scripts/chk_js_format.sh` — biome check (format + lint; try `--write --unsafe` on failure)
-- `scripts/chk_js_dead.sh` — knip (dead code)
-- `scripts/chk_js_package_audit.sh` — `pnpm audit`, auto-fix via `pnpm-workspace.yaml` overrides
+- `pnpm dlx @biomejs/biome check --write --reporter=concise .`
+- `pnpm exec tsc --noEmit`
+- `pnpm dlx knip --reporter compact`
 
-The full run is `scripts/run_checks.sh`; the shared verification policy lives in the root `AGENTS.md`.
+Fix errors and warnings and update `AGENTS.md` so they are prevented in future.
 
 ## TypeScript notes
 
