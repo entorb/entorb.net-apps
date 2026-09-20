@@ -1,5 +1,8 @@
 biomejs
+browserslist
 entorb
+korrekturleser
 multitimer
+nvmrc
 oware
 prek
