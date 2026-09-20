@@ -99,9 +99,8 @@ describe("buildNumberSteps", () => {
   it("produces strictly ordered steps", () => {
     const { prev, next } = applyMove([4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4], "A", "anan_anan", 0)
     const { steps } = replay(prev, next, 0)
-    for (let i = 1; i < steps.length; i++) {
-      expect(steps[i]!.time).toBeGreaterThanOrEqual(steps[i - 1]!.time)
-    }
+    const times = steps.map((s) => s.time)
+    expect(times).toEqual([...times].sort((a, b) => a - b))
   })
 
   it("works from the real starting state", () => {
