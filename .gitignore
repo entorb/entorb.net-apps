@@ -1,3 +1,4 @@
+.pnpm-store/
 __pycache__/
 cspell-words-missing.txt
 node_modules/
