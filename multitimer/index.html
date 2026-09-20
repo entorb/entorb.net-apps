@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="author" content="Dr. Torben Menke" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <title>Multi-Timer</title>
+  <meta name="description" content="Set and manage multiple countdown timers." />
+  <meta name="keywords" content="Multi-Timer, multi timer, countdown, timer, idle game countdown, OpenSource, free" />
+</head>
+
+<body>
+  <header>
+
+    <h1>
+      <img src="/favicon.svg" alt="" width="32" height="32" /> Multi-Timer
+    </h1>
+  </header>
+  <main>
+    <form id="form">
+      <label> Name of Timer <input id="input-name" type="text" autocomplete="off" />
+      </label>
+      <label> Time <input id="input-time" type="text" inputmode="decimal" autocomplete="off" aria-describedby="time-hint" />
+      </label>
+      <button type="submit">Add</button>
+    </form>
+
+    <p id="time-hint" class="hint"> Time in minutes. Add a unit <code>s</code>, <code>m</code>, <code>h</code> or <code>d</code>: <code>90s</code>, <code>1.5h</code>, <code>2d</code>. Or <code>1:30</code> for 1 min 30 s. </p>
+    <div id="recent"></div>
+    <table hidden>
+      <thead>
+        <tr>
+          <th scope="col">Name</th>
+          <th scope="col" class="end">End</th>
+          <th scope="col" class="time">Time</th>
+          <th scope="col">
+            <button id="btn-resetAll" type="button" aria-label="Reset all timers"><svg viewBox="0 0 24 24" aria-hidden="true">
+                <path fill="currentColor" d="M17.65,6.35C16.2,4.9 14.21,4 12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20C15.73,20 18.84,17.45 19.73,14H17.65C16.83,16.33 14.61,18 12,18A6,6 0 0,1 6,12A6,6 0 0,1 12,6C13.66,6 15.14,6.69 16.22,7.78L13,11H20V4L17.65,6.35Z" />
+              </svg></button>
+          </th>
+          <th scope="col">
+            <button id="btn-deleteAll" type="button" aria-label="Delete all timers"><svg viewBox="0 0 24 24" aria-hidden="true">
+                <path fill="currentColor" d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" />
+              </svg></button>
+          </th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </main>
+  <footer>
+
+    <p id="stats" hidden></p>
+
+    <p> This app is free (as of free-beer), ad-free and OpenSource. If you like it, please share it. <a href="https://entorb.net/contact.php?origin=multitimer" target="_blank" rel="noopener noreferrer">Feedback</a> is highly appreciated. Complete source code and project documentation are at <a href="https://github.com/entorb/entorb.net-apps/tree/main/multitimer" target="_blank" rel="noopener noreferrer">GitHub.com/entorb/entorb.net-apps/</a>. </p>
+  </footer>
+  <template id="row-template">
+    <tr>
+      <td class="name"></td>
+      <td class="end"></td>
+      <td class="time">
+        <div class="bar"><span class="fill"></span><strong class="left"></strong></div>
+      </td>
+      <td><button class="reset" type="button" aria-label="Reset timer"><svg viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="currentColor" d="M17.65,6.35C16.2,4.9 14.21,4 12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20C15.73,20 18.84,17.45 19.73,14H17.65C16.83,16.33 14.61,18 12,18A6,6 0 0,1 6,12A6,6 0 0,1 12,6C13.66,6 15.14,6.69 16.22,7.78L13,11H20V4L17.65,6.35Z" />
+          </svg></button></td>
+      <td><button class="del" type="button" aria-label="Delete timer"><svg viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="currentColor" d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" />
+          </svg></button></td>
+    </tr>
+  </template>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+
+</html>
