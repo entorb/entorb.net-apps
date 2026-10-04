@@ -1,13 +1,12 @@
 #!/bin/sh
+set -e
+cd "$(dirname "$0")/.."
+DIR=$(pwd)/scripts
+
 # Usage: deploy.sh [app ...]   (no args: all apps)
 
-DIR=$(cd "$(dirname "$0")" && pwd) || exit 1
-cd "$DIR/.." || exit 1
 # shellcheck source-path=SCRIPTDIR source=apps.sh
 . "$DIR/apps.sh"
-
-# exit upon error
-set -e
 
 if [ $# -gt 0 ]; then
   apps="$*"
@@ -16,6 +15,7 @@ else
   apps="$APPS"
   "$DIR/run_checks.sh"
 fi
+"$DIR/run_spelling.sh"
 
 for app in $apps; do
   echo ""
