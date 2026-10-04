@@ -1,12 +1,10 @@
 #!/bin/sh
+set -e
+cd "$(dirname "$0")/.."
+DIR=$(pwd)/scripts
 
-DIR=$(cd "$(dirname "$0")" && pwd) || exit 1
-cd "$DIR/.." || exit 1
 # shellcheck source-path=SCRIPTDIR source=apps.sh
 . "$DIR/apps.sh"
-
-# exit upon error
-set -e
 
 echo "## Node and PNPM versions"
 # use the versions provided by the system, never install them here

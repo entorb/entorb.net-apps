@@ -1,9 +1,11 @@
 #!/bin/sh
+set -e
+cd "$(dirname "$0")/.."
+DIR=$(pwd)/scripts
+
 # Usage: run_checks.sh [app ...]
 # no args: repo-wide checks + every app; with args: only those apps
 
-DIR=$(cd "$(dirname "$0")" && pwd) || exit 1
-cd "$DIR/.." || exit 1
 # shellcheck source-path=SCRIPTDIR source=apps.sh
 . "$DIR/apps.sh"
 

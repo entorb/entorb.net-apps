@@ -1,6 +1,6 @@
 #!/bin/sh
 
-cd "$(dirname "$0")/../python"
+cd "$(dirname "$0")/../python" || exit 1
 out=$(mktemp)
 trap 'rm -f "$out"' EXIT INT TERM
 

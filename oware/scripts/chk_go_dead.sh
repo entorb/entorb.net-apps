@@ -1,6 +1,6 @@
 #!/bin/sh
 
-cd "$(dirname "$0")/../go"
+cd "$(dirname "$0")/../go" || exit 1
 out=$(mktemp)
 trap 'rm -f "$out"' EXIT INT TERM
 
