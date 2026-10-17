@@ -3,7 +3,6 @@ browserslist
 entorb
 knip
 korrekturleser
-multitimer
 nvmrc
 oware
 PKGS
