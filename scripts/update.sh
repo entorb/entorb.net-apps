@@ -43,7 +43,7 @@ done
 echo ""
 echo "# repo"
 echo "## Prek autoupdate"
-prek autoupdate
+prek autoupdate --cooldown-days 7
 
 echo "## run_checks.sh"
 "$DIR/run_checks.sh"
