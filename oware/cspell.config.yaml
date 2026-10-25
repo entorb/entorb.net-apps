@@ -14,7 +14,7 @@ dictionaries:
   - typescript
 language: en-US
 ignorePaths:
-  - "/*.json"
+  - /*.json
   - /.vscode/
   - /cspell-words.txt
   - /cspell.config.yaml
