@@ -1,6 +1,6 @@
 ---
 $schema: https://raw.githubusercontent.com/streetsidesoftware/cspell/main/cspell.schema.json
-version: "0.2"
+version: '0.2'
 useCache: true
 useGitignore: true
 dictionaryDefinitions:
@@ -15,8 +15,13 @@ language: en-US
 ignorePaths:
   - /*.json
   - /.vscode/
-  - /cspell-words.txt
-  - /cspell.config.yaml
-  - /LICENSE
-  - /uv.lock
+  - biome.json
+  - cspell-words.txt
+  - cspell.config.yaml
+  - LICENSE
+  - package*.json
+  - pnpm-lock.yaml
   - pnpm-workspace.yaml
+  - pyproject.toml
+  - requirements.txt
+  - uv.lock
