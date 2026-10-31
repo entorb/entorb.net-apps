@@ -16,6 +16,11 @@ for app in $APPS; do
   echo ""
   echo "# $app"
   cd "$(js_dir "$app")"
+  if [ ! -f package.json ]; then
+    echo "no node project"
+    cd "$DIR/.."
+    continue
+  fi
 
   node -e "
     const pkg = JSON.parse(require('fs').readFileSync('package.json','utf8'));
@@ -55,6 +60,7 @@ PKGS=".pre-commit-config.yaml biome.json cspell-words.txt oware/python/pyproject
 if [ -f oware/go/go.sum ]; then LOCKS="$LOCKS oware/go/go.sum"; fi
 for app in $APPS; do
   dir=$(js_dir "$app")
+  [ -f "$dir/package.json" ] || continue
   LOCKS="$LOCKS $dir/pnpm-lock.yaml"
   PKGS="$PKGS $dir/package.json $app/cspell-words.txt"
   if [ -f "$dir/pnpm-workspace.yaml" ]; then PKGS="$PKGS $dir/pnpm-workspace.yaml"; fi
