@@ -7,7 +7,7 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "includes": ["**", "!**/*.md", "!**/*.yaml", "!**/*.yml"]
+    "includes": ["**", "!**/*.md", "!**/*.yaml", "!**/*.yml", "!entorb.net"]
   },
   "formatter": {
     "enabled": true,

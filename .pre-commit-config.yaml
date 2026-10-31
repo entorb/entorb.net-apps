@@ -11,6 +11,7 @@
 exclude: >-
   (?x)^(
     \.vscode/.*
+    |entorb\.net/.*
     |.*/tsconfig.json
     |.*/pnpm-lock.yaml
     |oware/web/pnpm-lock.yaml
