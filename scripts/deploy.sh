@@ -28,7 +28,7 @@ for app in $apps; do
     src=dist/
   fi
   # trailing slash instead of glob, so dotfiles like .htaccess are copied
-  rsync -rhv --delete --no-perms "$src" "entorb@entorb.net:html/$app/"
+  rsync -rhv --delete --no-perms "$src" "entorb@mab.uberspace.de:html/$app/"
   cd "$DIR/.."
 done
 
