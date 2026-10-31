@@ -36,9 +36,12 @@ fi
 for app in $apps; do
   echo ""
   echo "# $app"
-  for f in "$DIR"/js/chk_*.sh; do
-    run "$(basename "$f" .sh)" sh "$f" "$(js_dir "$app")"
-  done
+  # node checks only for apps with a node project
+  if [ -f "$(js_dir "$app")/package.json" ]; then
+    for f in "$DIR"/js/chk_*.sh; do
+      run "$(basename "$f" .sh)" sh "$f" "$(js_dir "$app")"
+    done
+  fi
   # app specific checks, e.g. oware go and python
   for f in "$app"/scripts/chk_*.sh; do
     [ -f "$f" ] || continue

@@ -21,8 +21,14 @@ for app in $apps; do
   echo ""
   echo "# $app"
   cd "$(js_dir "$app")"
-  pnpm run build
-  rsync -rhv --delete --no-perms dist/* "entorb@entorb.net:html/$app/"
+  # apps without node project deploy their files as-is
+  src=./
+  if [ -f package.json ]; then
+    pnpm run build
+    src=dist/
+  fi
+  # trailing slash instead of glob, so dotfiles like .htaccess are copied
+  rsync -rhv --delete --no-perms "$src" "entorb@entorb.net:html/$app/"
   cd "$DIR/.."
 done
 
