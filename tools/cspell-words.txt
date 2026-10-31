@@ -1,0 +1,13 @@
+accesscounts
+ALNUM
+blau
+DMBI
+dopingconverter
+entorb
+grün
+IAPP
+passgen
+Pentacene
+TCNNQ
+TCNQ
+wavenumber
