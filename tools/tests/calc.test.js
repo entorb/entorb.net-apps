@@ -8,6 +8,7 @@ import {
   passwords,
   round,
   spritkosten,
+  teatime,
 } from "../web/calc.js"
 
 test("parseNum", () => {
@@ -99,4 +100,11 @@ test("spritkosten empty inputs give 0, not NaN", () => {
   const zero = Object.fromEntries(Object.keys(EXCEL).map((k) => [k, 0]))
   const r = spritkosten({ ...EXCEL, ...zero, fix: [[100, 0]] })
   assert.ok(Object.values(r).every((x) => x === 0))
+})
+
+test("teatime", () => {
+  assert.deepEqual(teatime(300, 60, 80, 15), { hot: (300 * 45) / 65, cold: 300 - (300 * 45) / 65 })
+  assert.deepEqual(teatime(200, 50, 90, 10), { hot: 100, cold: 100 })
+  assert.ok("error" in teatime(200, 90, 80, 15))
+  assert.ok("error" in teatime(200, 15, 15, 15))
 })

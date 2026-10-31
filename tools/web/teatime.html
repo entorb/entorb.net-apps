@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title data-i18n="title">Teatime Calculator</title>
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .stack {
+      display: flex;
+      flex-direction: column;
+      height: 16rem;
+    }
+
+    .stack[hidden] {
+      display: none;
+    }
+
+    .seg {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .fill {
+      width: 7rem;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      color: #fff;
+      font-weight: bold;
+    }
+
+    .hot {
+      background: #dc2626;
+    }
+
+    .cold {
+      background: #2563eb;
+      border-radius: var(--radius) var(--radius) 0 0;
+    }
+  </style>
+</head>
+
+<body>
+  <main>
+    <button type="button" id="lang" style="float: right">EN</button>
+
+    <h1 data-i18n="title">Teatime Calculator</h1>
+
+    <p data-i18n="intro">How much cold water to mix into hot tea (after x&nbsp;min steep) to reach a drinking temperature and fill your cup?</p>
+    <form id="form">
+      <table>
+        <tbody>
+          <tr>
+            <th><label for="amount" data-i18n="amount">Cup size</label></th>
+            <td><input id="amount" type="range" min="200" max="1500" step="100" value="400" /></td>
+            <td><output id="amount-out" for="amount">400</output> ml</td>
+          </tr>
+          <tr>
+            <th><label for="target" data-i18n="target">Drinking temperature</label></th>
+            <td><input id="target" type="range" min="20" max="80" step="5" value="60" /></td>
+            <td><output id="target-out" for="target">60</output> °C</td>
+          </tr>
+          <tr>
+            <th><label for="hot" data-i18n="hot">Hot tea</label></th>
+            <td><input id="hot" type="range" min="50" max="100" step="5" value="80" /></td>
+            <td><output id="hot-out" for="hot">80</output> °C</td>
+          </tr>
+          <tr>
+            <th><label for="cold" data-i18n="cold">Cold water</label></th>
+            <td><input id="cold" type="range" min="10" max="30" step="5" value="15" /></td>
+            <td><output id="cold-out" for="cold">15</output> °C</td>
+          </tr>
+        </tbody>
+      </table>
+    </form>
+
+    <h2 data-i18n="result">Result</h2>
+
+    <p id="error" role="alert" hidden></p>
+    <div id="result" class="stack" aria-live="polite">
+      <div id="cold-bar" class="seg">
+        <div class="fill cold" id="cold-pct"></div>
+        <span><span data-i18n="coldShort">Cold</span><br /><span id="cold-label"></span></span>
+      </div>
+      <div id="hot-bar" class="seg">
+        <div class="fill hot" id="hot-pct"></div>
+        <span><span data-i18n="hotShort">Hot</span><br /><span id="hot-label"></span></span>
+      </div>
+    </div>
+  </main>
+  <footer class="foot">
+    <a href="/" data-i18n="home">Home</a> - <a href="/contact.php?origin=teatime" data-i18n="contact">Contact</a> - <a href="https://github.com/entorb/entorb.net-apps/tree/main/tools" target="_blank" rel="noopener">GitHub</a> - <span data-i18n="calcs">Teas served</span>: <span id="use-count"></span>
+  </footer>
+  <script type="module" src="teatime.js"></script>
+</body>
+
+</html>

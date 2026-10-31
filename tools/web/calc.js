@@ -204,3 +204,22 @@ export function spritkosten(p) {
     bahn25: div(0.75 * p.bahnPreis + share(p.bc25), h),
   }
 }
+
+// --- teatime ---
+
+/**
+ * Split a target amount into hot and cold water to reach the target temperature.
+ * @param {number} amount ml
+ * @param {number} target °C
+ * @param {number} hot °C
+ * @param {number} cold °C
+ * @returns {{hot: number, cold: number} | {error: string}} ml
+ */
+export function teatime(amount, target, hot, cold) {
+  if (hot <= cold) return { error: "Hot water must be warmer than cold water" }
+  if (target < cold || target > hot)
+    return { error: "Target temperature must be between cold and hot" }
+  // energy balance: hot * (Th - T) = cold * (T - Tc)
+  const h = (amount * (target - cold)) / (hot - cold)
+  return { hot: h, cold: amount - h }
+}

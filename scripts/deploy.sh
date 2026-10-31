@@ -28,8 +28,18 @@ for app in $apps; do
     src=dist/
   fi
   # trailing slash instead of glob, so dotfiles like .htaccess are copied
-  rsync -rhv --delete --no-perms "$src" "entorb@mab.uberspace.de:html/$app/"
+  rsync -rhv --delete --no-perms "$src" "entorb8@mab.uberspace.de:/var/www/virtual/entorb8/html/$app/"
   cd "$DIR/.."
 done
+
+echo ""
+echo "# entorb.net"
+printf "Overwrite index.php and web-stats-json.php on server? [y/N] "
+read -r answer || answer="" # no tty / EOF: treat as no, don't abort via set -e
+if [ "$answer" = "y" ]; then
+  scp entorb.net/index.php entorb.net/web-stats-json.php "entorb8@mab.uberspace.de:/var/www/virtual/entorb8/html/"
+else
+  echo "skipped"
+fi
 
 echo "deploy DONE"
