@@ -1,4 +1,3 @@
-__pycache__/
 .pnpm-store/
 .pytest_cache/
 .ruff_cache/
@@ -6,6 +5,8 @@ __pycache__/
 /entorb.net/**/*.jpg
 /entorb.net/**/*.png
 /entorb.net/**/*.svg
+/entorb.net/strom/
+__pycache__/
 cspell-words-missing.txt
 node_modules/
 tmp/

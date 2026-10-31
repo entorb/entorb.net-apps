@@ -16,6 +16,7 @@ ignorePaths:
   - '**/*.d.ts'
   - /*.json
   - /.vscode/
+  - /entorb.net/
   - biome.json
   - cspell-words.txt
   - cspell.config.yaml
@@ -27,4 +28,5 @@ ignorePaths:
   - public/
   - pyproject.toml
   - requirements.txt
+  - tools/old/
   - uv.lock
