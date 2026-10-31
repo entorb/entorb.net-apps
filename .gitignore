@@ -1,9 +1,11 @@
+__pycache__/
 .pnpm-store/
 .pytest_cache/
 .ruff_cache/
 .rumdl_cache/
-/entorb.net
-__pycache__/
+/entorb.net/**/*.jpg
+/entorb.net/**/*.png
+/entorb.net/**/*.svg
 cspell-words-missing.txt
 node_modules/
 tmp/
