@@ -8,3 +8,4 @@ This repos hosts multiple tiny web apps, written in vanilla typescript.
   `./scripts/run_checks.sh [app]`, `./scripts/deploy.sh [app]`, `./scripts/update.sh`
 - `scripts/js/chk_*.sh <dir>` are the shared node checks, `<dir>` is the app's node project
   (`idle`, `oware/web`); per-app copies do not exist.
+- `tools` is plain JS without node project or build: node checks are skipped, `tools/web/` is deployed as-is.
