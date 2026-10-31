@@ -19,3 +19,4 @@ ignorePaths:
   - /cspell.config.yaml
   - /LICENSE
   - /uv.lock
+  - pnpm-workspace.yaml
