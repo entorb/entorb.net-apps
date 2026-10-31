@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Doping Converter</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main>
+      <h1>Doping Converter</h1>
+      <p>Convert dopant concentration between weight%, molar% and molar ratio.</p>
+      <form id="form">
+        <table>
+          <tbody>
+            <tr>
+              <th><label for="mmh">Molar Mass Host</label></th>
+              <td><input id="mmh" inputmode="decimal" size="9" /></td>
+              <td>g/mol</td>
+            </tr>
+            <tr>
+              <th><label for="mmd">Molar Mass Dopant</label></th>
+              <td><input id="mmd" inputmode="decimal" size="9" /></td>
+              <td>g/mol</td>
+            </tr>
+            <tr>
+              <th><label for="wt">Weight% (wt%)</label></th>
+              <td><input id="wt" inputmode="decimal" size="9" /></td>
+              <td><button type="submit" value="wt">Convert</button></td>
+            </tr>
+            <tr>
+              <th><label for="mol">Molar% (mol%)</label></th>
+              <td><input id="mol" inputmode="decimal" size="9" /></td>
+              <td><button type="submit" value="mol">Convert</button></td>
+            </tr>
+            <tr>
+              <th><label for="mr">Molar Ratio (MR)</label></th>
+              <td><input id="mr" inputmode="decimal" size="9" /></td>
+              <td><button type="submit" value="mr">Convert</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </form>
+      <p id="error" class="error" role="alert"></p>
+
+      <h2>Some materials used at IAPP</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Material</th>
+            <th>Molar Mass</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>AOB</td><td class="num">265.353</td></tr>
+          <tr><td>BF-DPB</td><td class="num">720.941</td></tr>
+          <tr><td>C60</td><td class="num">720.642</td></tr>
+          <tr><td>C60F36</td><td class="num">1404.58</td></tr>
+          <tr><td>Cr2(hpp)4</td><td class="num">656.753</td></tr>
+          <tr><td>F4-TCNQ</td><td class="num">276.149</td></tr>
+          <tr><td>F6-TCNNQ</td><td class="num">362.188</td></tr>
+          <tr><td>MeO-TPD</td><td class="num">608.725</td></tr>
+          <tr><td>o-MeO-DMBI</td><td class="num">254.327</td></tr>
+          <tr><td>OH-DMBI</td><td class="num">240.3</td></tr>
+          <tr><td>Pentacene</td><td class="num">278.35</td></tr>
+          <tr><td>W2(hpp)4</td><td class="num">920.441</td></tr>
+          <tr><td>ZnPc</td><td class="num">577.92</td></tr>
+        </tbody>
+      </table>
+    </main>
+    <footer class="foot">
+      <a href="/">Home</a> - <a href="/contact.php?origin=dopingconverter">Contact</a> -
+      <a href="https://github.com/entorb/entorb.net-apps/tree/main/tools" target="_blank" rel="noopener">GitHub</a> -
+      Conversions: <span id="use-count"></span>
+    </footer>
+    <script type="module" src="doping.js"></script>
+  </body>
+</html>

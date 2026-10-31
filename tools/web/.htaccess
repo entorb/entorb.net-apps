@@ -1,0 +1,4 @@
+Redirect 301 /tools/doping-converter.php /tools/doping.html
+Redirect 301 /tools/nm-eV-Converter.php /tools/nm2eV.html
+Redirect 301 /tools/foreach.cgi /tools/foreach.html
+Redirect 301 /tools/pass-gen.pl /tools/pass-gen.html
