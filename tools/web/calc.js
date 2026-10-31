@@ -155,3 +155,52 @@ export function passwords(len, range, special, count) {
     return pw
   })
 }
+
+// --- spritkosten ---
+
+/** division where 0 divisor yields 0, for empty inputs @param {number} a @param {number} b */
+const div = (a, b) => (b === 0 ? 0 : a / b)
+
+/**
+ * Car trip costs, port of the old spritkosten Excel. All results per 100 km.
+ * @param {object} p
+ * @param {number} p.km trip distance
+ * @param {number} p.verbrauch L or kWh per 100 km
+ * @param {number} p.preis € per L or kWh
+ * @param {number} p.jahresKm yearly km without this trip
+ * @param {[number, number][]} p.fix yearly fixed costs as [amount €, every X years]
+ * @param {number} p.wertAnfang car value at start of year
+ * @param {number} p.wertEnde car value at end of year
+ * @param {number} p.zins interest rate in %
+ * @param {number} p.co2Faktor kg CO2 per L or kWh
+ * @param {number} p.bahnStrecke example train distance
+ * @param {number} p.bahnPreis normal price of example train trip
+ * @param {number} p.bahnKm yearly train km
+ * @param {number} p.bc50 BahnCard 50 price
+ * @param {number} p.bc25 BahnCard 25 price
+ */
+export function spritkosten(p) {
+  // this trip adds to the yearly km, so it carries its share of the fixed costs
+  const kmYear = p.jahresKm + p.km
+  const fuel = p.verbrauch * p.preis
+  const fix =
+    div(
+      p.fix.reduce((s, [amount, years]) => s + div(amount, years), 0),
+      kmYear,
+    ) * 100
+  const wert = div(p.wertAnfang - p.wertEnde + (p.wertAnfang * p.zins) / 100, kmYear) * 100
+  const co2 = p.verbrauch * p.co2Faktor
+  const h = p.bahnStrecke / 100
+  /** a BahnCard's price is shared by all yearly train km @param {number} bc */
+  const share = (bc) => div(bc * p.bahnStrecke, p.bahnKm)
+  return {
+    fuel,
+    fix,
+    wert,
+    total: fuel + fix + wert,
+    co2,
+    bahn: div(p.bahnPreis, h),
+    bahn50: div(0.5 * p.bahnPreis + share(p.bc50), h),
+    bahn25: div(0.75 * p.bahnPreis + share(p.bc25), h),
+  }
+}

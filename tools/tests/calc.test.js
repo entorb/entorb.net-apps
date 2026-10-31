@@ -1,6 +1,14 @@
 import assert from "node:assert/strict"
 import { test } from "node:test"
-import { convertDoping, convertLight, foreach, parseNum, passwords, round } from "../web/calc.js"
+import {
+  convertDoping,
+  convertLight,
+  foreach,
+  parseNum,
+  passwords,
+  round,
+  spritkosten,
+} from "../web/calc.js"
 
 test("parseNum", () => {
   assert.equal(parseNum("1,5"), 1.5)
@@ -48,4 +56,47 @@ test("passwords", () => {
     assert.match(pw, /\d/)
   }
   assert.ok(passwords(12, 0, false, 20).every((pw) => /^[a-zA-Z0-9]{12}$/.test(pw)))
+})
+
+const EXCEL = {
+  km: 250,
+  verbrauch: 7,
+  preis: 1.93,
+  jahresKm: 6000,
+  fix: /** @type {[number, number][]} */ ([
+    [94, 1],
+    [277, 1],
+    [90, 2],
+    [0, 2],
+    [100, 1],
+    [100, 5],
+    [10, 0.5],
+  ]),
+  wertAnfang: 1250,
+  wertEnde: 1200,
+  zins: 1,
+  co2Faktor: 2.33,
+  bahnStrecke: 1000,
+  bahnPreis: 180,
+  bahnKm: 3000,
+  bc50: 234,
+  bc25: 57,
+}
+
+test("spritkosten matches Excel", () => {
+  const r = spritkosten(EXCEL)
+  assert.equal(round((r.fuel * EXCEL.km) / 100, 3), 33.775)
+  assert.equal(round(r.fix, 3), 8.896)
+  assert.equal(round(r.wert, 3), 1)
+  assert.equal(round((r.total * EXCEL.km) / 100, 3), 58.515)
+  assert.equal(round(r.co2, 2), 16.31)
+  assert.equal(round(r.bahn, 2), 18)
+  assert.equal(round(r.bahn50, 2), 16.8)
+  assert.equal(round(r.bahn25, 2), 15.4)
+})
+
+test("spritkosten empty inputs give 0, not NaN", () => {
+  const zero = Object.fromEntries(Object.keys(EXCEL).map((k) => [k, 0]))
+  const r = spritkosten({ ...EXCEL, ...zero, fix: [[100, 0]] })
+  assert.ok(Object.values(r).every((x) => x === 0))
 })
