@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>nm to eV Converter</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <main>
+
+    <h1>nm to eV Converter</h1>
+
+    <p>Convert between wavelength (nm), energy (eV), wavenumber (cm<sup>-1</sup>) and frequency (THz).</p>
+    <form id="form" class="row">
+      <label>Point 1: <input id="pnt1" inputmode="decimal" size="9" /></label>
+      <label>Point 2: <input id="pnt2" inputmode="decimal" size="9" /></label>
+      <label>Unit: <select id="unit">
+          <option value="nm">nm</option>
+          <option value="eV">eV</option>
+          <option value="cm">cm-1</option>
+          <option value="THz">THz</option>
+        </select>
+      </label>
+      <button type="submit">Convert</button>
+    </form>
+    <table id="result" hidden>
+      <thead>
+        <tr>
+          <th>Point 1</th>
+          <th>Point 2</th>
+          <th>P2-P1</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </main>
+  <footer class="foot">
+    <a href="/">Home</a> - <a href="/contact.php?origin=nm2eV">Contact</a> - <a href="https://github.com/entorb/entorb.net-apps/tree/main/tools" target="_blank" rel="noopener">GitHub</a> - Conversions: <span id="use-count"></span>
+  </footer>
+  <script type="module" src="nm2eV.js"></script>
+</body>
+
+</html>

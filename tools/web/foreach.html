@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Foreach Generator</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main>
+      <h1>Foreach Generator</h1>
+      <p>Replace %A% and %B% in the text by each line of the lists.</p>
+      <form id="form">
+        <div class="grid">
+          <label
+            >Text
+            <textarea id="text" rows="10" wrap="off">Der %A% ist %B%.</textarea>
+          </label>
+          <label
+            >%A%
+            <textarea id="list-a" rows="10">
+Baum
+Hut
+Mensch</textarea
+            >
+          </label>
+          <label
+            >%B%
+            <textarea id="list-b" rows="10">
+rot
+grün
+blau</textarea
+            >
+          </label>
+        </div>
+        <div class="row">
+          <button type="submit" value="cartesian">Cartesian Product</button>
+          or
+          <button type="submit" value="scalar">Scalar Product</button>
+          <label><input type="checkbox" id="separate" checked /> separate sets by empty lines</label>
+        </div>
+      </form>
+      <p id="error" class="error" role="alert"></p>
+      <label for="output">Generated Text</label>
+      <textarea id="output" rows="10" readonly></textarea>
+    </main>
+    <footer class="foot">
+      <a href="/">Home</a> - <a href="/contact.php?origin=Foreach">Contact</a> -
+      <a href="https://github.com/entorb/entorb.net-apps/tree/main/tools" target="_blank" rel="noopener">GitHub</a> -
+      Uses: <span id="use-count"></span>
+    </footer>
+    <script type="module" src="foreach.js"></script>
+  </body>
+</html>
