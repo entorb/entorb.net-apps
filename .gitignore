@@ -1,0 +1,9 @@
+.pnpm-store/
+.pytest_cache/
+.ruff_cache/
+.rumdl_cache/
+/entorb.net
+__pycache__/
+cspell-words-missing.txt
+node_modules/
+tmp/
