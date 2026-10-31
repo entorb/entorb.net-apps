@@ -6,3 +6,4 @@ __pycache__/
 cspell-words-missing.txt
 node_modules/
 tmp/
+/entorb.net
