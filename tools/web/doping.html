@@ -3,53 +3,55 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Doping Converter</title>
+    <meta name="description" content="Converter doping concentration: weight% (wt%) to molar% (mol%) to molar ratio (MR)" />
+    <title data-i18n="title">Doping Converter</title>
     <link rel="stylesheet" href="/style.css" />
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
     <main>
-      <h1>Doping Converter</h1>
-      <p>Convert dopant concentration between weight%, molar% and molar ratio.</p>
+      <button type="button" id="lang" style="float: right">EN</button>
+      <h1 data-i18n="title">Doping Converter</h1>
+      <p data-i18n="intro">Convert dopant concentration between weight%, molar% and molar ratio.</p>
       <form id="form">
         <table>
           <tbody>
             <tr>
-              <th><label for="mmh">Molar Mass Host</label></th>
+              <th><label for="mmh" data-i18n="mmh">Molar Mass Host</label></th>
               <td><input id="mmh" inputmode="decimal" size="9" /></td>
               <td>g/mol</td>
             </tr>
             <tr>
-              <th><label for="mmd">Molar Mass Dopant</label></th>
+              <th><label for="mmd" data-i18n="mmd">Molar Mass Dopant</label></th>
               <td><input id="mmd" inputmode="decimal" size="9" /></td>
               <td>g/mol</td>
             </tr>
             <tr>
-              <th><label for="wt">Weight% (wt%)</label></th>
+              <th><label for="wt" data-i18n="wt">Weight% (wt%)</label></th>
               <td><input id="wt" inputmode="decimal" size="9" /></td>
-              <td><button type="submit" value="wt">Convert</button></td>
+              <td><button type="submit" value="wt" data-i18n="convert">Convert</button></td>
             </tr>
             <tr>
-              <th><label for="mol">Molar% (mol%)</label></th>
+              <th><label for="mol" data-i18n="mol">Molar% (mol%)</label></th>
               <td><input id="mol" inputmode="decimal" size="9" /></td>
-              <td><button type="submit" value="mol">Convert</button></td>
+              <td><button type="submit" value="mol" data-i18n="convert">Convert</button></td>
             </tr>
             <tr>
-              <th><label for="mr">Molar Ratio (MR)</label></th>
+              <th><label for="mr" data-i18n="mr">Molar Ratio (MR)</label></th>
               <td><input id="mr" inputmode="decimal" size="9" /></td>
-              <td><button type="submit" value="mr">Convert</button></td>
+              <td><button type="submit" value="mr" data-i18n="convert">Convert</button></td>
             </tr>
           </tbody>
         </table>
       </form>
       <p id="error" class="error" role="alert"></p>
 
-      <h2>Some materials used at IAPP</h2>
+      <h2 data-i18n="materials">Some materials used at IAPP</h2>
       <table>
         <thead>
           <tr>
             <th>Material</th>
-            <th>Molar Mass</th>
+            <th data-i18n="molarMass">Molar Mass</th>
           </tr>
         </thead>
         <tbody>
@@ -70,9 +72,9 @@
       </table>
     </main>
     <footer class="foot">
-      <a href="/">Home</a> - <a href="/contact.php?origin=dopingconverter">Contact</a> -
+      <a href="/" data-i18n="home">Home</a> - <a href="/contact.php?origin=dopingconverter" data-i18n="contact">Contact</a> -
       <a href="https://github.com/entorb/entorb.net-apps/tree/main/tools" target="_blank" rel="noopener">GitHub</a> -
-      Conversions: <span id="use-count"></span>
+      <span data-i18n="uses">Conversions</span>: <span id="use-count"></span>
     </footer>
     <script type="module" src="doping.js"></script>
   </body>

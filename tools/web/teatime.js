@@ -1,5 +1,6 @@
 // @ts-check
 import { parseNum, teatime } from "./calc.js"
+import { initLang, lang } from "./i18n.js"
 import { recordUse, showCount } from "./stats.js"
 
 const ORIGIN = "teatime"
@@ -9,7 +10,6 @@ const el = (id) => /** @type {HTMLInputElement} */ (document.getElementById(id))
 const num = (id) => parseNum(el(id).value)
 let recorded = false
 
-/** @typedef {"en" | "de"} Lang */
 /** English lives in the HTML, keyed by data-i18n */
 const DE = {
   title: "Teezeit-Rechner",
@@ -32,32 +32,6 @@ const ERRORS_DE = {
   "Target temperature must be between cold and hot":
     "Zieltemperatur muss zwischen kalt und heiß liegen",
 }
-/** @type {Lang} */
-let lang = "en"
-try {
-  const saved = localStorage.getItem("teatime-lang")
-  lang =
-    saved === "de" || saved === "en" ? saved : navigator.language.startsWith("de") ? "de" : "en"
-} catch {
-  lang = navigator.language.startsWith("de") ? "de" : "en"
-}
-
-const i18nEls = /** @type {HTMLElement[]} */ ([...document.querySelectorAll("[data-i18n]")])
-// English text from the HTML, captured before the first switch
-const EN = new Map(i18nEls.map((e) => [e, e.textContent]))
-
-function applyLang() {
-  document.documentElement.lang = lang
-  for (const e of i18nEls) {
-    const key = /** @type {keyof typeof DE} */ (e.dataset.i18n)
-    e.textContent = lang === "de" ? DE[key] : (EN.get(e) ?? "")
-  }
-  el("lang").textContent = lang.toUpperCase()
-  el("lang").setAttribute(
-    "aria-label",
-    lang === "en" ? "Auf Deutsch umschalten" : "Switch to English",
-  )
-}
 
 function calc() {
   for (const id of ["amount", "target", "hot", "cold"]) el(`${id}-out`).textContent = el(id).value
@@ -67,7 +41,7 @@ function calc() {
   el("result").hidden = err
   if (err) {
     const msg = /** @type {keyof typeof ERRORS_DE} */ (r.error)
-    el("error").textContent = lang === "de" ? ERRORS_DE[msg] : msg
+    el("error").textContent = lang() === "de" ? ERRORS_DE[msg] : msg
   } else {
     const total = r.hot + r.cold
     // round only hot to 25 ml, cold is the rest, so the sum stays the target
@@ -91,18 +65,8 @@ el("form").addEventListener("input", () => {
   if (!recorded) void recordUse(ORIGIN)
   recorded = true
 })
-el("lang").addEventListener("click", () => {
-  lang = lang === "en" ? "de" : "en"
-  try {
-    localStorage.setItem("teatime-lang", lang)
-  } catch {
-    // storage blocked: toggle still works for this visit
-  }
-  applyLang()
-  calc()
-})
 el("form").addEventListener("submit", (ev) => ev.preventDefault())
 
-applyLang()
+initLang(DE, calc)
 calc()
 void showCount(ORIGIN)

@@ -3,46 +3,48 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Random Password Generator</title>
+    <meta name="description" content="RPG: random password generator" />
+    <title data-i18n="title">Random Password Generator</title>
     <link rel="stylesheet" href="/style.css" />
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
     <main>
-      <h1>RPG - Random Password Generator</h1>
-      <p>Generated in your browser, nothing is sent to the server.</p>
+      <button type="button" id="lang" style="float: right">EN</button>
+      <h1 data-i18n="h1">RPG - Random Password Generator</h1>
+      <p data-i18n="intro">Generated in your browser, nothing is sent to the server.</p>
       <div id="out" class="mono"></div>
       <form id="form">
         <table>
           <tbody>
             <tr>
-              <th><label for="len">base length</label></th>
+              <th><label for="len" data-i18n="len">base length</label></th>
               <td><input type="number" id="len" min="8" max="100" value="20" step="1" /></td>
             </tr>
             <tr>
-              <th><label for="range">range</label></th>
+              <th><label for="range" data-i18n="range">range</label></th>
               <td><input type="number" id="range" min="0" max="9" value="4" step="1" /></td>
             </tr>
             <tr>
-              <th><label for="special">special chars</label></th>
+              <th><label for="special" data-i18n="special">special chars</label></th>
               <td><input type="checkbox" id="special" /></td>
             </tr>
             <tr>
-              <th><label for="count">count</label></th>
+              <th><label for="count" data-i18n="count">count</label></th>
               <td><input type="number" id="count" min="20" max="50" value="20" step="1" /></td>
             </tr>
             <tr>
               <td></td>
-              <td><button type="submit">Generate</button></td>
+              <td><button type="submit" data-i18n="generate">Generate</button></td>
             </tr>
           </tbody>
         </table>
       </form>
     </main>
     <footer class="foot">
-      <a href="/">Home</a> - <a href="/contact.php?origin=passgen">Contact</a> -
+      <a href="/" data-i18n="home">Home</a> - <a href="/contact.php?origin=passgen" data-i18n="contact">Contact</a> -
       <a href="https://github.com/entorb/entorb.net-apps/tree/main/tools" target="_blank" rel="noopener">GitHub</a> -
-      Uses: <span id="use-count"></span>
+      <span data-i18n="uses">Uses</span>: <span id="use-count"></span>
     </footer>
     <script type="module" src="pass-gen.js"></script>
   </body>

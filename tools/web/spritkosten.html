@@ -3,195 +3,197 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Spritkostenrechner</title>
+    <meta name="description" content="Spritkosten: car trip cost calculator" />
+    <title data-i18n="title">Spritkostenrechner</title>
     <link rel="stylesheet" href="/style.css" />
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
     <main>
-      <h1>Spritkostenrechner</h1>
-      <p>Was kostet eine Autofahrt? Vorgabewerte: Durchschnitt Deutschland, Stand Oktober 2026. Sprit- bzw. Stromkosten, laufende Kosten, Wertverlust, CO<sub>2</sub> und Vergleich mit Mitfahrgelegenheit, CarSharing, Taxi und Bahn.</p>
+      <button type="button" id="lang" style="float: right">DE</button>
+      <h1 data-i18n="title">Spritkostenrechner</h1>
+      <p data-i18n="intro">Was kostet eine Autofahrt? Vorgabewerte: Durchschnitt Deutschland, Stand Oktober 2026. Sprit- bzw. Stromkosten, laufende Kosten, Wertverlust, CO<sub>2</sub> und Vergleich mit Mitfahrgelegenheit, CarSharing, Taxi und Bahn.</p>
       <form id="form">
         <table>
           <tbody>
             <tr>
-              <th><label for="km">Strecke</label></th>
+              <th><label for="km" data-i18n="km">Strecke</label></th>
               <td><input id="km" inputmode="decimal" size="9" value="250" /></td>
               <td>km</td>
             </tr>
             <tr>
-              <th><label for="antrieb">Antrieb</label></th>
+              <th><label for="antrieb" data-i18n="antrieb">Antrieb</label></th>
               <td>
                 <select id="antrieb">
-                  <option value="benzin">Benzin</option>
+                  <option value="benzin" data-i18n="benzin">Benzin</option>
                   <option value="diesel">Diesel</option>
-                  <option value="elektro">Elektro</option>
+                  <option value="elektro" data-i18n="elektro">Elektro</option>
                 </select>
               </td>
               <td></td>
             </tr>
             <tr>
-              <th><label for="verbrauch">Verbrauch</label></th>
+              <th><label for="verbrauch" data-i18n="verbrauch">Verbrauch</label></th>
               <td><input id="verbrauch" inputmode="decimal" size="9" value="7" /></td>
               <td><span class="einheit">L</span>/100 km</td>
             </tr>
             <tr>
-              <th><label for="preis">Preis an der Tankstelle</label></th>
+              <th><label for="preis" data-i18n="preis">Preis an der Tankstelle</label></th>
               <td><input id="preis" inputmode="decimal" size="9" value="2,08" /></td>
               <td>€/<span class="einheit">L</span></td>
             </tr>
             <tr>
-              <th><label for="personen">Personen</label></th>
+              <th><label for="personen" data-i18n="personen">Personen</label></th>
               <td><select id="personen"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td>
               <td></td>
             </tr>
           </tbody>
         </table>
 
-        <button type="button" id="anpassen">Anpassen</button>
+        <button type="button" id="anpassen" data-i18n="anpassen">Anpassen</button>
         <dialog id="dialog" closedby="any" aria-labelledby="dialog-title">
-          <h2 id="dialog-title">Vorgabewerte anpassen</h2>
+          <h2 id="dialog-title" data-i18n="dialogTitle">Vorgabewerte anpassen</h2>
 
-          <h2>Laufende Kosten</h2>
+          <h2 data-i18n="laufend">Laufende Kosten</h2>
           <table>
             <thead>
               <tr>
-                <th>Posten</th>
-                <th>Betrag €</th>
-                <th>alle X Jahre</th>
+                <th data-i18n="posten">Posten</th>
+                <th id="c-betrag" data-i18n="betrag">Betrag €</th>
+                <th id="c-jahre" data-i18n="jahre">alle X Jahre</th>
               </tr>
             </thead>
             <tbody id="fix">
-              <tr><th>Steuer</th><td><input inputmode="decimal" size="7" value="150" aria-label="Steuer Betrag" /></td><td><input inputmode="decimal" size="4" value="1" aria-label="Steuer alle X Jahre" /></td></tr>
-              <tr><th>Versicherung</th><td><input inputmode="decimal" size="7" value="600" aria-label="Versicherung Betrag" /></td><td><input inputmode="decimal" size="4" value="1" aria-label="Versicherung alle X Jahre" /></td></tr>
-              <tr><th>TÜV</th><td><input inputmode="decimal" size="7" value="163" aria-label="TÜV Betrag" /></td><td><input inputmode="decimal" size="4" value="2" aria-label="TÜV alle X Jahre" /></td></tr>
-              <tr><th>Inspektionen</th><td><input inputmode="decimal" size="7" value="300" aria-label="Inspektionen Betrag" /></td><td><input inputmode="decimal" size="4" value="1" aria-label="Inspektionen alle X Jahre" /></td></tr>
-              <tr><th>Reparaturen/Ersatzteile</th><td><input inputmode="decimal" size="7" value="400" aria-label="Reparaturen Betrag" /></td><td><input inputmode="decimal" size="4" value="1" aria-label="Reparaturen alle X Jahre" /></td></tr>
-              <tr><th>Neue Reifen</th><td><input inputmode="decimal" size="7" value="500" aria-label="Reifen Betrag" /></td><td><input inputmode="decimal" size="4" value="4" aria-label="Reifen alle X Jahre" /></td></tr>
-              <tr><th>Autowäsche</th><td><input inputmode="decimal" size="7" value="12" aria-label="Autowäsche Betrag" /></td><td><input inputmode="decimal" size="4" value="0,25" aria-label="Autowäsche alle X Jahre" /></td></tr>
+              <tr><th id="f-steuer" data-i18n="steuer">Steuer</th><td><input inputmode="decimal" size="7" value="150" aria-labelledby="f-steuer c-betrag" /></td><td><input inputmode="decimal" size="4" value="1" aria-labelledby="f-steuer c-jahre" /></td></tr>
+              <tr><th id="f-versicherung" data-i18n="versicherung">Versicherung</th><td><input inputmode="decimal" size="7" value="600" aria-labelledby="f-versicherung c-betrag" /></td><td><input inputmode="decimal" size="4" value="1" aria-labelledby="f-versicherung c-jahre" /></td></tr>
+              <tr><th id="f-tuev" data-i18n="tuev">TÜV</th><td><input inputmode="decimal" size="7" value="163" aria-labelledby="f-tuev c-betrag" /></td><td><input inputmode="decimal" size="4" value="2" aria-labelledby="f-tuev c-jahre" /></td></tr>
+              <tr><th id="f-inspektionen" data-i18n="inspektionen">Inspektionen</th><td><input inputmode="decimal" size="7" value="300" aria-labelledby="f-inspektionen c-betrag" /></td><td><input inputmode="decimal" size="4" value="1" aria-labelledby="f-inspektionen c-jahre" /></td></tr>
+              <tr><th id="f-reparaturen" data-i18n="reparaturen">Reparaturen/Ersatzteile</th><td><input inputmode="decimal" size="7" value="400" aria-labelledby="f-reparaturen c-betrag" /></td><td><input inputmode="decimal" size="4" value="1" aria-labelledby="f-reparaturen c-jahre" /></td></tr>
+              <tr><th id="f-reifen" data-i18n="reifen">Neue Reifen</th><td><input inputmode="decimal" size="7" value="500" aria-labelledby="f-reifen c-betrag" /></td><td><input inputmode="decimal" size="4" value="4" aria-labelledby="f-reifen c-jahre" /></td></tr>
+              <tr><th id="f-waesche" data-i18n="waesche">Autowäsche</th><td><input inputmode="decimal" size="7" value="12" aria-labelledby="f-waesche c-betrag" /></td><td><input inputmode="decimal" size="4" value="0,25" aria-labelledby="f-waesche c-jahre" /></td></tr>
             </tbody>
           </table>
           <table>
             <tbody>
               <tr>
-                <th><label for="jahresKm">Jahreskilometer (ohne diese Strecke)</label></th>
+                <th><label for="jahresKm" data-i18n="jahresKm">Jahreskilometer (ohne diese Strecke)</label></th>
                 <td><input id="jahresKm" inputmode="decimal" size="9" value="12000" /></td>
                 <td>km</td>
               </tr>
             </tbody>
           </table>
 
-          <h2>Wertverlust</h2>
+          <h2 data-i18n="wertverlust">Wertverlust</h2>
           <table>
             <tbody>
               <tr>
-                <th><label for="wertAnfang">Autowert Jahresanfang</label></th>
+                <th><label for="wertAnfang" data-i18n="wertAnfang">Autowert Jahresanfang</label></th>
                 <td><input id="wertAnfang" inputmode="decimal" size="9" value="18000" /></td>
                 <td>€</td>
               </tr>
               <tr>
-                <th><label for="wertEnde">Autowert Jahresende</label></th>
+                <th><label for="wertEnde" data-i18n="wertEnde">Autowert Jahresende</label></th>
                 <td><input id="wertEnde" inputmode="decimal" size="9" value="16200" /></td>
                 <td>€</td>
               </tr>
               <tr>
-                <th><label for="zins">Zinssatz (Zinsausfall)</label></th>
+                <th><label for="zins" data-i18n="zins">Zinssatz (Zinsausfall)</label></th>
                 <td><input id="zins" inputmode="decimal" size="9" value="2" /></td>
                 <td>%</td>
               </tr>
             </tbody>
           </table>
 
-          <h2>Vergleich</h2>
+          <h2 data-i18n="vergleich">Vergleich</h2>
           <table>
             <tbody>
               <tr>
-                <th><label for="mfg">Mitfahrgelegenheit</label></th>
+                <th><label for="mfg" data-i18n="mfg">Mitfahrgelegenheit</label></th>
                 <td><input id="mfg" inputmode="decimal" size="9" value="7" /></td>
                 <td>€/100 km</td>
               </tr>
               <tr>
-                <th><label for="carsharing">CarSharing</label></th>
+                <th><label for="carsharing" data-i18n="carsharing">CarSharing</label></th>
                 <td><input id="carsharing" inputmode="decimal" size="9" value="35" /></td>
-                <td>€/100 km (stationsbasiert inkl. Sprit, ohne Zeitpreis)</td>
+                <td data-i18n="carsharingNote">€/100 km (stationsbasiert inkl. Sprit, ohne Zeitpreis)</td>
               </tr>
               <tr>
                 <th><label for="taxi">Taxi</label></th>
                 <td><input id="taxi" inputmode="decimal" size="9" value="270" /></td>
-                <td>€/100 km (ohne Grundpreis)</td>
+                <td data-i18n="taxiNote">€/100 km (ohne Grundpreis)</td>
               </tr>
               <tr>
-                <th><label for="bahnStrecke">Bahn: Beispielstrecke</label></th>
+                <th><label for="bahnStrecke" data-i18n="bahnStrecke">Bahn: Beispielstrecke</label></th>
                 <td><input id="bahnStrecke" inputmode="decimal" size="9" value="1000" /></td>
                 <td>km</td>
               </tr>
               <tr>
-                <th><label for="bahnPreis">Bahn: Normalpreis dafür</label></th>
+                <th><label for="bahnPreis" data-i18n="bahnPreis">Bahn: Normalpreis dafür</label></th>
                 <td><input id="bahnPreis" inputmode="decimal" size="9" value="270" /></td>
                 <td>€</td>
               </tr>
               <tr>
-                <th><label for="bahnKm">Bahn: Jahreskilometer</label></th>
+                <th><label for="bahnKm" data-i18n="bahnKm">Bahn: Jahreskilometer</label></th>
                 <td><input id="bahnKm" inputmode="decimal" size="9" value="3000" /></td>
                 <td>km</td>
               </tr>
               <tr>
                 <th><label for="bc50">BahnCard 50</label></th>
                 <td><input id="bc50" inputmode="decimal" size="9" value="244" /></td>
-                <td>€/Jahr</td>
+                <td data-i18n="perYear">€/Jahr</td>
               </tr>
               <tr>
                 <th><label for="bc25">BahnCard 25</label></th>
                 <td><input id="bc25" inputmode="decimal" size="9" value="62,90" /></td>
-                <td>€/Jahr</td>
+                <td data-i18n="perYear">€/Jahr</td>
               </tr>
             </tbody>
           </table>
-          <button type="button" id="schliessen">Schließen</button>
+          <button type="button" id="schliessen" data-i18n="schliessen">Schließen</button>
         </dialog>
       </form>
 
-      <h2>Ergebnis</h2>
+      <h2 data-i18n="ergebnis">Ergebnis</h2>
       <table aria-live="polite">
         <thead>
           <tr>
-            <th>Kosten</th>
-            <th>diese Strecke</th>
-            <th>je 100 km (= ct/km)</th>
+            <th data-i18n="kosten">Kosten</th>
+            <th data-i18n="strecke">diese Strecke</th>
+            <th data-i18n="je100">je 100 km (= ct/km)</th>
           </tr>
         </thead>
         <tbody>
           <tr><th id="fuel-label">Sprit</th><td class="num" id="fuel-t"></td><td class="num" id="fuel-h"></td></tr>
-          <tr><th>Laufende Kosten</th><td class="num" id="fix-t"></td><td class="num" id="fix-h"></td></tr>
-          <tr><th>Wertverlust</th><td class="num" id="wert-t"></td><td class="num" id="wert-h"></td></tr>
-          <tr style="font-weight: bold"><th>Gesamt</th><td class="num" id="total-t"></td><td class="num" id="total-h"></td></tr>
-          <tr id="person-row" hidden><th>Gesamt pro Person</th><td class="num" id="person-t"></td><td class="num" id="person-h"></td></tr>
+          <tr><th data-i18n="laufend">Laufende Kosten</th><td class="num" id="fix-t"></td><td class="num" id="fix-h"></td></tr>
+          <tr><th data-i18n="wertverlust">Wertverlust</th><td class="num" id="wert-t"></td><td class="num" id="wert-h"></td></tr>
+          <tr style="font-weight: bold"><th data-i18n="gesamt">Gesamt</th><td class="num" id="total-t"></td><td class="num" id="total-h"></td></tr>
+          <tr id="person-row" hidden><th data-i18n="proPerson">Gesamt pro Person</th><td class="num" id="person-t"></td><td class="num" id="person-h"></td></tr>
           <tr><th>CO<sub>2</sub></th><td class="num" id="co2-t"></td><td class="num" id="co2-h"></td></tr>
         </tbody>
       </table>
-      <h2>Vergleich</h2>
+      <h2 data-i18n="vergleich">Vergleich</h2>
       <table>
         <thead>
           <tr>
-            <th>Alternative (alle Personen)</th>
-            <th>diese Strecke</th>
-            <th>je 100 km (= ct/km)</th>
+            <th data-i18n="alternative">Alternative (alle Personen)</th>
+            <th data-i18n="strecke">diese Strecke</th>
+            <th data-i18n="je100">je 100 km (= ct/km)</th>
           </tr>
         </thead>
         <tbody>
-          <tr><th>Mitfahrgelegenheit</th><td class="num" id="mfg-t"></td><td class="num" id="mfg-h"></td></tr>
+          <tr><th data-i18n="mfg">Mitfahrgelegenheit</th><td class="num" id="mfg-t"></td><td class="num" id="mfg-h"></td></tr>
           <tr><th>CarSharing</th><td class="num" id="carsharing-t"></td><td class="num" id="carsharing-h"></td></tr>
           <tr><th>Taxi</th><td class="num" id="taxi-t"></td><td class="num" id="taxi-h"></td></tr>
-          <tr><th>Bahn Normalpreis</th><td class="num" id="bahn-t"></td><td class="num" id="bahn-h"></td></tr>
-          <tr><th>Bahn mit BahnCard 50</th><td class="num" id="bahn50-t"></td><td class="num" id="bahn50-h"></td></tr>
-          <tr><th>Bahn mit BahnCard 25</th><td class="num" id="bahn25-t"></td><td class="num" id="bahn25-h"></td></tr>
+          <tr><th data-i18n="bahnNormal">Bahn Normalpreis</th><td class="num" id="bahn-t"></td><td class="num" id="bahn-h"></td></tr>
+          <tr><th data-i18n="bahn50">Bahn mit BahnCard 50</th><td class="num" id="bahn50-t"></td><td class="num" id="bahn50-h"></td></tr>
+          <tr><th data-i18n="bahn25">Bahn mit BahnCard 25</th><td class="num" id="bahn25-t"></td><td class="num" id="bahn25-h"></td></tr>
         </tbody>
       </table>
     </main>
     <footer class="foot">
-      <a href="/">Startseite</a> - <a href="/contact.php?origin=spritkosten">Kontakt</a> -
+      <a href="/" data-i18n="home">Startseite</a> - <a href="/contact.php?origin=spritkosten" data-i18n="contact">Kontakt</a> -
       <a href="https://github.com/entorb/entorb.net-apps/tree/main/tools" target="_blank" rel="noopener">GitHub</a> -
-      Berechnungen: <span id="use-count"></span>
+      <span data-i18n="uses">Berechnungen</span>: <span id="use-count"></span>
     </footer>
     <script type="module" src="spritkosten.js"></script>
   </body>

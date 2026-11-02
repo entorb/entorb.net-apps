@@ -1,5 +1,6 @@
 // @ts-check
 import { convertLight, parseNum, round } from "./calc.js"
+import { initLang } from "./i18n.js"
 import { recordUse, showCount } from "./stats.js"
 
 const ORIGIN = "nm2eV"
@@ -10,6 +11,19 @@ const UNITS = [
   ["cm", "cm<sup>-1</sup>", 0],
   ["THz", "THz", 2],
 ]
+/** English lives in the HTML, keyed by data-i18n */
+const DE = {
+  title: "nm-zu-eV-Umrechner",
+  intro:
+    "Umrechnung zwischen Wellenlänge (nm), Energie (eV), Wellenzahl (cm<sup>-1</sup>) und Frequenz (THz).",
+  p1: "Punkt 1",
+  p2: "Punkt 2",
+  unit: "Einheit",
+  convert: "Umrechnen",
+  home: "Startseite",
+  contact: "Kontakt",
+  uses: "Umrechnungen",
+}
 /** @param {string} id */
 const el = (id) => /** @type {HTMLInputElement} */ (document.getElementById(id))
 
@@ -35,4 +49,5 @@ el("form").addEventListener("submit", (ev) => {
   void recordUse(ORIGIN)
 })
 
+initLang(DE)
 void showCount(ORIGIN)

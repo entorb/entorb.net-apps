@@ -3,14 +3,16 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Foreach Generator</title>
+    <meta name="description" content="Foreach generator" />
+    <title data-i18n="title">Foreach Generator</title>
     <link rel="stylesheet" href="/style.css" />
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
     <main>
-      <h1>Foreach Generator</h1>
-      <p>Replace %A% and %B% in the text by each line of the lists.</p>
+      <button type="button" id="lang" style="float: right">EN</button>
+      <h1 data-i18n="title">Foreach Generator</h1>
+      <p data-i18n="intro">Replace %A% and %B% in the text by each line of the lists.</p>
       <form id="form">
         <div class="grid">
           <label
@@ -35,20 +37,20 @@ blau</textarea
           </label>
         </div>
         <div class="row">
-          <button type="submit" value="cartesian">Cartesian Product</button>
-          or
-          <button type="submit" value="scalar">Scalar Product</button>
-          <label><input type="checkbox" id="separate" checked /> separate sets by empty lines</label>
+          <button type="submit" value="cartesian" data-i18n="cartesian">Cartesian Product</button>
+          <span data-i18n="or">or</span>
+          <button type="submit" value="scalar" data-i18n="scalar">Scalar Product</button>
+          <label><input type="checkbox" id="separate" checked /> <span data-i18n="separate">separate sets by empty lines</span></label>
         </div>
       </form>
       <p id="error" class="error" role="alert"></p>
-      <label for="output">Generated Text</label>
+      <label for="output" data-i18n="output">Generated Text</label>
       <textarea id="output" rows="10" readonly></textarea>
     </main>
     <footer class="foot">
-      <a href="/">Home</a> - <a href="/contact.php?origin=Foreach">Contact</a> -
+      <a href="/" data-i18n="home">Home</a> - <a href="/contact.php?origin=Foreach" data-i18n="contact">Contact</a> -
       <a href="https://github.com/entorb/entorb.net-apps/tree/main/tools" target="_blank" rel="noopener">GitHub</a> -
-      Uses: <span id="use-count"></span>
+      <span data-i18n="uses">Uses</span>: <span id="use-count"></span>
     </footer>
     <script type="module" src="foreach.js"></script>
   </body>

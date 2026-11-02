@@ -1,8 +1,23 @@
 // @ts-check
 import { passwords } from "./calc.js"
+import { initLang } from "./i18n.js"
 import { recordUse } from "./stats.js"
 
 const ORIGIN = "passgen"
+/** English lives in the HTML, keyed by data-i18n */
+const DE = {
+  title: "Zufalls-Passwort-Generator",
+  h1: "ZPG - Zufalls-Passwort-Generator",
+  intro: "Wird in deinem Browser erzeugt, nichts wird an den Server gesendet.",
+  len: "Grundlänge",
+  range: "Spanne",
+  special: "Sonderzeichen",
+  count: "Anzahl",
+  generate: "Erzeugen",
+  home: "Startseite",
+  contact: "Kontakt",
+  uses: "Nutzungen",
+}
 /** @param {string} id */
 const input = (id) => /** @type {HTMLInputElement} */ (document.getElementById(id))
 
@@ -33,4 +48,5 @@ input("form").addEventListener("submit", (ev) => {
   generate()
 })
 
+initLang(DE)
 generate()
